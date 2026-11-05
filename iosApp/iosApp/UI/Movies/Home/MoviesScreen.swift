@@ -6,6 +6,8 @@ struct MoviesScreen: View {
     let navToMovieSection: (MovieSection) -> Void
     let navToMovieDetails: (Int32) -> Void
     let navToSettings: () -> Void
+    let isLoggedIn: Bool
+    let navToFavorites: () -> Void
 
     private func onMovie(_ movieId: Int32) {
         model.viewModel.onAction(action: MoviesActionOnMovieClick(movieId: movieId))
@@ -47,6 +49,15 @@ struct MoviesScreen: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Movies")
         .toolbar {
+            if isLoggedIn {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: navToFavorites) {
+                        Image(systemName: "heart")
+                    }
+                    .accessibilityLabel("Favorites")
+                    .accessibilityIdentifier("movies.favorites")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: navToSettings) {
                     Image(systemName: "person.crop.circle")
