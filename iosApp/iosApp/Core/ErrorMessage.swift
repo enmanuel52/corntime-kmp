@@ -30,6 +30,17 @@ extension MovieSection {
     }
 }
 
+extension TvShowsSection {
+    var title: String {
+        switch self {
+        case .popular: return String(localized: "Popular")
+        case .topRated: return String(localized: "Top Rated")
+        case .onTheAir: return String(localized: "On The Air")
+        case .airingToday: return String(localized: "Airing Today")
+        }
+    }
+}
+
 extension LoginFieldError {
     var message: String {
         switch self {
