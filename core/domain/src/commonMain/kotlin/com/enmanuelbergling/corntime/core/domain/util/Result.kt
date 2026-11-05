@@ -34,3 +34,5 @@ fun <T, E : Error> Result<T, E>.getOrThrow(): T = when (this) {
     is Result.Success -> data
     is Result.Failure -> throw DataException(error)
 }
+
+fun <T, E : Error> Result<T, E>.errorOrNull(): E? = (this as? Result.Failure)?.error
