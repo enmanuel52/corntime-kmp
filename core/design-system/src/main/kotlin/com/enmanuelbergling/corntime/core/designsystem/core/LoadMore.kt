@@ -2,6 +2,7 @@ package com.enmanuelbergling.corntime.core.designsystem.core
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -36,6 +37,23 @@ fun LazyGridState.OnLoadMore(
 
 @Composable
 fun LazyListState.OnLoadMore(
+    itemCount: Int,
+    enabled: Boolean = true,
+    prefetch: Int = DEFAULT_PREFETCH,
+    onLoadMore: () -> Unit,
+) {
+    val nearEnd by remember(this, prefetch) {
+        derivedStateOf {
+            val last = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return@derivedStateOf true
+            last >= layoutInfo.totalItemsCount - 1 - prefetch
+        }
+    }
+    val latest by rememberUpdatedState(onLoadMore)
+    LaunchedEffect(nearEnd, itemCount, enabled) { if (enabled && nearEnd && itemCount > 0) latest() }
+}
+
+@Composable
+fun LazyStaggeredGridState.OnLoadMore(
     itemCount: Int,
     enabled: Boolean = true,
     prefetch: Int = DEFAULT_PREFETCH,
