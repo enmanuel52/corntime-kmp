@@ -1,0 +1,5 @@
+<resources>
+    <string name="known_movies">Películas conocidas</string>
+    <string name="no_actors_found">No se encontraron actores</string>
+    <string name="actor_menu_icon">Icono del menú</string>
+</resources>
