@@ -13,7 +13,10 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import com.enmanuelbergling.corntime.core.designsystem.core.LocalAnimatedContentScope
+import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorDetailsKey
+import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.actorEntries
 import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.authEntries
+import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.moviesEntries
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.settingsEntries
 
@@ -42,8 +45,13 @@ fun CornTimeNavHost(
             moviesEntries(
                 onNavigate = state::navigate,
                 onBack = state::back,
-                // Actor details arrive with the actor feature.
-                onActor = {},
+                onActor = { id, name, imagePath -> state.navigate(ActorDetailsKey(id, imagePath, name)) },
+                onOpenDrawer = onOpenDrawer,
+            )
+            actorEntries(
+                onNavigate = state::navigate,
+                onBack = state::back,
+                onMovie = { state.navigate(MovieDetailsKey(it)) },
                 onOpenDrawer = onOpenDrawer,
             )
             settingsEntries(

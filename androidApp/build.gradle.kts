@@ -17,6 +17,7 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(projects.core.designSystem)
+    implementation(projects.feature.actor.presentation)
     implementation(projects.feature.auth.presentation)
     implementation(projects.feature.settings.presentation)
     implementation(projects.feature.movies.presentation)
