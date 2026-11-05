@@ -40,6 +40,7 @@ include(":core:domain")
 include(":core:data")
 include(":core:testing")
 include(":core:datastore")
+include(":core:sync")
 include(":core:presentation")
 include(":core:design-system")
 
