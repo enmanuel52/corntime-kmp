@@ -31,6 +31,22 @@ enum ScreenModels {
         ScreenModel(make: { ViewModels.shared.actorDetails(actorId: actorId) }, state: { $0.state })
     }
 
+    static func favoriteMovies() -> ScreenModel<FavoriteMoviesViewModel, FavoriteMoviesState> {
+        ScreenModel(make: { ViewModels.shared.favoriteMovies() }, state: { $0.state })
+    }
+
+    static func watchlistHome() -> ScreenModel<WatchlistHomeViewModel, WatchlistHomeState> {
+        ScreenModel(make: { ViewModels.shared.watchlistHome() }, state: { $0.state })
+    }
+
+    static func createdWatchLists() -> ScreenModel<CreatedWatchListsViewModel, CreatedWatchListsState> {
+        ScreenModel(make: { ViewModels.shared.createdWatchLists() }, state: { $0.state })
+    }
+
+    static func watchListDetails(listId: Int32) -> ScreenModel<WatchListDetailsViewModel, WatchListDetailsState> {
+        ScreenModel(make: { ViewModels.shared.watchListDetails(listId: listId) }, state: { $0.state })
+    }
+
     static func login() -> ScreenModel<LoginViewModel, LoginState> {
         ScreenModel(make: { ViewModels.shared.login() }, state: { $0.state })
     }
