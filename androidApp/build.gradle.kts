@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.feature.watchlists.presentation)
     implementation(projects.feature.settings.presentation)
     implementation(projects.feature.movies.presentation)
+    implementation(projects.feature.tvshows.presentation)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)

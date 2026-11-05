@@ -14,6 +14,9 @@ import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.LoginK
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.SettingsKey
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.EpisodeDetailsKey
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.TvShowDetailsKey
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.TvShowsHomeKey
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.ListDetailsKey
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.WatchlistKey
 import kotlin.test.Test
@@ -160,5 +163,61 @@ class CornTimeAppStateTest {
 
         state.back()
         assertThat(state.currentKey).isEqualTo(ActorsKey)
+    }
+
+    @Test
+    fun givenTheDrawer_whenListingItsDestinations_thenTvShowsComesRightAfterMovies() {
+        val destinations = state(isLoggedIn = false).drawerDestinations
+
+        assertThat(destinations.take(2)).containsExactly(TopDestination.Movies, TopDestination.TvShows)
+        assertThat(TopDestination.TvShows.loginRequired).isFalse()
+    }
+
+    @Test
+    fun givenMovies_whenChoosingTvShowsInTheDrawer_thenTheStackIsMoviesThenTvShowsAndTheDrawerGestureStaysOn() {
+        val state = state()
+
+        state.navigateToDrawerDestination(TopDestination.TvShows)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey, TvShowsHomeKey)
+        assertThat(state.isSelected(TopDestination.TvShows)).isTrue()
+        assertThat(state.isSelected(TopDestination.Movies)).isFalse()
+        assertThat(state.mainDrawerEnabled).isTrue()
+    }
+
+    @Test
+    fun givenTvShowsHome_whenGoingBack_thenReturnsToMovies() {
+        val state = state(MoviesHomeKey, TvShowsHomeKey)
+
+        state.back()
+
+        assertThat(state.currentKey).isEqualTo(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenTvShowDetailsOpen_whenCheckingTheDrawer_thenNothingIsSelectedAndTheGestureIsOff() {
+        val state = state(MoviesHomeKey, TvShowsHomeKey, TvShowDetailsKey(1))
+
+        assertThat(state.currentTopDestination).isNull()
+        assertThat(state.mainDrawerEnabled).isFalse()
+    }
+
+    @Test
+    fun givenTvShowDetailsOpen_whenChoosingMoviesInTheDrawer_thenTheStackIsJustMovies() {
+        val state = state(MoviesHomeKey, TvShowsHomeKey, TvShowDetailsKey(1), EpisodeDetailsKey(1, 1, 1))
+
+        state.navigateToDrawerDestination(TopDestination.Movies)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenAnActorOpenedFromAnEpisode_whenGoingBack_thenReturnsToTheEpisode() {
+        val state = state(MoviesHomeKey, TvShowsHomeKey, TvShowDetailsKey(1), EpisodeDetailsKey(1, 1, 1))
+
+        state.navigate(ActorDetailsKey(id = 5, imagePath = null, name = "Tim"))
+        state.back()
+
+        assertThat(state.currentKey).isEqualTo(EpisodeDetailsKey(1, 1, 1))
     }
 }

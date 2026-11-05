@@ -10,8 +10,8 @@ kotlin {
         }
         androidMain.dependencies {
             // list/detail scenes for the seasons -> episodes -> episode flow on wide windows
-            api(libs.androidx.navigation3.ui)
-            api(libs.androidx.material3.adaptive.navigation3)
+            implementation(libs.androidx.navigation3.ui)
+            implementation(libs.androidx.material3.adaptive.navigation3)
         }
         commonTest.dependencies {
             implementation(projects.core.testing)

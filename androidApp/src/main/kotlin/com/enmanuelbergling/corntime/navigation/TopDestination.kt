@@ -7,10 +7,11 @@ import com.enmanuelbergling.corntime.core.designsystem.R
 import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.SettingsKey
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.TvShowsHomeKey
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.WatchlistKey
 
 /**
- * Destinations reachable from the drawer. TV shows are added here when that feature lands.
+ * Destinations reachable from the drawer.
  */
 enum class TopDestination(
     @StringRes val label: Int,
@@ -23,6 +24,7 @@ enum class TopDestination(
     val drawerGesture: Boolean = true,
 ) {
     Movies(R.string.movies, R.drawable.film_solid, R.drawable.film_outline, MoviesHomeKey),
+    TvShows(R.string.tv_shows, R.drawable.tv_solid, R.drawable.tv_outline, TvShowsHomeKey),
     Actors(R.string.actors, R.drawable.check_badge_solid, R.drawable.check_badge_outline, ActorsKey),
     Lists(
         R.string.watch_lists,
