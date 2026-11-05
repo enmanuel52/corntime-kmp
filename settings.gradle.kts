@@ -45,5 +45,6 @@ include(":core:design-system")
 
 include(":feature:auth:domain")
 include(":feature:auth:presentation")
+include(":feature:settings:presentation")
 include(":feature:movies:domain")
 include(":feature:movies:presentation")
