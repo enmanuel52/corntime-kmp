@@ -1,5 +1,8 @@
 <resources>
     <string name="favorites">Favoritos</string>
+    <string name="favorite_tv_shows">Series favoritas</string>
     <string name="movie_removed_from_favorites">Película eliminada de favoritos</string>
+    <string name="tv_show_removed_from_favorites">Serie eliminada de favoritos</string>
     <string name="no_favorites_yet">Aún no hay favoritos</string>
+    <string name="no_favorite_tv_shows_yet">Aún no hay series favoritas</string>
 </resources>
