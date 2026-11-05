@@ -17,6 +17,8 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(projects.core.designSystem)
+    implementation(projects.feature.auth.presentation)
+    implementation(projects.feature.settings.presentation)
     implementation(projects.feature.movies.presentation)
 
     implementation(libs.androidx.activity.compose)
@@ -32,4 +34,14 @@ dependencies {
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+tasks.withType<Test>().configureEach { useJUnitPlatform() }
+
+dependencies {
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.junit.jupiter)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.assertk)
 }

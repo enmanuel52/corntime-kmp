@@ -1,37 +1,69 @@
 package com.enmanuelbergling.corntime.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import com.enmanuelbergling.corntime.core.designsystem.core.LocalAnimatedContentScope
+import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.authEntries
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.moviesEntries
+import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.settingsEntries
 
 /**
  * Single Navigation 3 host. Each entry gets its own ViewModelStore, so screen ViewModels (and their
  * `parametersOf` arguments) live and die with their back stack entry.
  */
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun CornTimeNavHost() {
-    val backStack = rememberNavBackStack(MoviesHomeKey)
-
+fun CornTimeNavHost(
+    state: CornTimeAppState,
+    onOpenDrawer: () -> Unit,
+    onLoggedOut: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     NavDisplay(
-        backStack = backStack,
-        onBack = { backStack.removeLastOrNull() },
+        backStack = state.backStack,
+        onBack = state::back,
+        modifier = modifier,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
+            rememberSharedElementDecorator(),
         ),
         entryProvider = entryProvider {
             moviesEntries(
-                onNavigate = { key: NavKey -> backStack.add(key) },
-                onBack = { backStack.removeLastOrNull() },
+                onNavigate = state::navigate,
+                onBack = state::back,
                 // Actor details arrive with the actor feature.
                 onActor = {},
+                onOpenDrawer = onOpenDrawer,
             )
+            settingsEntries(
+                onBack = state::back,
+                onLogin = state::navigateToLogin,
+                onLoggedOut = onLoggedOut,
+            )
+            authEntries(onLoginSucceed = state::onLoginSucceeded, onBack = state::back)
+        },
+    )
+}
+
+/** Hands each entry's animated scope to the design system so shared elements can find it. */
+@Composable
+private fun rememberSharedElementDecorator(): NavEntryDecorator<NavKey> = androidx.compose.runtime.remember {
+    NavEntryDecorator(
+        decorate = { entry: NavEntry<NavKey> ->
+            CompositionLocalProvider(LocalAnimatedContentScope provides LocalNavAnimatedContentScope.current) {
+                entry.Content()
+            }
         },
     )
 }
