@@ -38,7 +38,8 @@ class ActorsViewModel(dataSource: ActorRemoteDataSource) : ViewModel() {
         when (action) {
             ActorsAction.OnLoadNextPage -> loadNextPage()
             is ActorsAction.OnActorClick -> viewModelScope.launch {
-                _events.send(ActorsEvent.NavigateToDetails(action.actor.id, action.actor.name, action.actor.profilePath))
+                // the list shows the original name, and the shared-element transition is keyed by what is shown
+                _events.send(ActorsEvent.NavigateToDetails(action.actor.id, action.actor.originalName, action.actor.profilePath))
             }
         }
     }

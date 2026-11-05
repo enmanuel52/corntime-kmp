@@ -17,6 +17,6 @@ sealed interface ActorsAction {
 }
 
 sealed interface ActorsEvent {
-    /** Carries what the details screen shows right away, before its own request finishes. */
+    /** Carries what the details screen shows right away (the list's own text: the original name). */
     data class NavigateToDetails(val actorId: Int, val name: String, val profilePath: String?) : ActorsEvent
 }

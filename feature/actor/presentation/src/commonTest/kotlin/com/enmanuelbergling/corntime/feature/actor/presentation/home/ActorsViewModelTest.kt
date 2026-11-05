@@ -108,13 +108,13 @@ class ActorsViewModelTest : MainDispatcherTest() {
     }
 
     @Test
-    fun givenAnActor_whenClicked_thenNavigationCarriesItsIdNameAndPhotoOnce() = runTest {
+    fun givenAnActor_whenClicked_thenNavigationCarriesItsIdOriginalNameAndPhotoOnce() = runTest {
         val viewModel = viewModel()
 
         viewModel.events.test {
             viewModel.onAction(ActorsAction.OnActorClick(FakeActorData.ACTOR.copy(id = 9, profilePath = "/x.jpg")))
 
-            assertThat(awaitItem()).isEqualTo(ActorsEvent.NavigateToDetails(9, FakeActorData.ACTOR.name, "/x.jpg"))
+            assertThat(awaitItem()).isEqualTo(ActorsEvent.NavigateToDetails(9, FakeActorData.ACTOR.originalName, "/x.jpg"))
             expectNoEvents()
         }
     }
