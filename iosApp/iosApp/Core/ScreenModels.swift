@@ -18,4 +18,16 @@ enum ScreenModels {
     static func movieSearch() -> ScreenModel<MovieSearchViewModel, MovieSearchState> {
         ScreenModel(make: { ViewModels.shared.movieSearch() }, state: { $0.state })
     }
+
+    static func app() -> ScreenModel<AppViewModel, AppState> {
+        ScreenModel(make: { ViewModels.shared.app() }, state: { $0.state })
+    }
+
+    static func login() -> ScreenModel<LoginViewModel, LoginState> {
+        ScreenModel(make: { ViewModels.shared.login() }, state: { $0.state })
+    }
+
+    static func settings() -> ScreenModel<SettingsViewModel, SettingsState> {
+        ScreenModel(make: { ViewModels.shared.settings() }, state: { $0.state })
+    }
 }
