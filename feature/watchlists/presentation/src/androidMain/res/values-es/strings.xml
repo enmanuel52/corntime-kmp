@@ -1,0 +1,18 @@
+<resources>
+    <string name="movie_removed_from_watchlist">Película eliminada de la lista de pendientes</string>
+    <string name="movie_removed_from_list">Película eliminada de la lista</string>
+    <string name="movie_added_to_favorites">Película añadida a favoritos</string>
+    <string name="watchlist_is_empty">Tu lista de pendientes está vacía</string>
+    <string name="list_is_empty">Esta lista no tiene películas</string>
+    <string name="no_lists_yet">Aún no has creado ninguna lista</string>
+    <string name="my_lists">Mis listas</string>
+    <string name="new_list">Nueva lista</string>
+    <string name="create">Crear</string>
+    <string name="list_name_hint">Nombre de la lista*</string>
+    <string name="list_description_hint">Descripción de la lista*</string>
+    <string name="list_name_required">La lista necesita un nombre</string>
+    <string name="list_description_required">La lista necesita una descripción</string>
+    <string name="delete_list_title">¿Eliminar esta lista?</string>
+    <string name="shortcut_icon">icono de acceso directo</string>
+    <string name="lists_icon">icono de listas</string>
+</resources>
