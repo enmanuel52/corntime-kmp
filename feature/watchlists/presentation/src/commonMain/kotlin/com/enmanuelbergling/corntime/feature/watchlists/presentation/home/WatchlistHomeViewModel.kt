@@ -40,6 +40,8 @@ class WatchlistHomeViewModel(
         }
     }
 
+    private var wasShown = false
+
     private val _state = MutableStateFlow(WatchlistHomeState())
     val state: StateFlow<WatchlistHomeState> = _state.asStateFlow()
 
@@ -56,6 +58,7 @@ class WatchlistHomeViewModel(
     fun onAction(action: WatchlistHomeAction) {
         when (action) {
             WatchlistHomeAction.OnLoadNextPage -> loadNextPage()
+            WatchlistHomeAction.OnScreenShown -> onScreenShown()
             is WatchlistHomeAction.OnMovieClick -> send(WatchlistHomeEvent.NavigateToDetails(action.movieId))
             WatchlistHomeAction.OnListsClick -> send(WatchlistHomeEvent.NavigateToLists)
             is WatchlistHomeAction.OnRemove -> removals.remove(action.movieId, RemovalKind.Remove)
@@ -64,6 +67,11 @@ class WatchlistHomeViewModel(
             WatchlistHomeAction.OnRetryRemoval -> removals.retry()
             WatchlistHomeAction.OnDismissRemovalError -> removals.dismissFailure()
         }
+    }
+
+    private fun onScreenShown() {
+        if (wasShown) viewModelScope.launch { paginator.refresh() }
+        wasShown = true
     }
 
     private fun loadNextPage() {

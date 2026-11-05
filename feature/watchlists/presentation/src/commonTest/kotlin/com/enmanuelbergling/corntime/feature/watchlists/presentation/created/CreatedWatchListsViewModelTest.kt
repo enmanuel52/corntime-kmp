@@ -154,4 +154,23 @@ class CreatedWatchListsViewModelTest : MainDispatcherTest() {
             assertThat(awaitItem()).isEqualTo(CreatedWatchListsEvent.NavigateToDetails(4, "comedy"))
         }
     }
+
+    @Test
+    fun givenTheFirstTimeTheScreenIsShown_whenReportingIt_thenNothingIsReloaded() = runTest {
+        val viewModel = viewModel()
+
+        viewModel.onAction(CreatedWatchListsAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetWatchLists)).isEqualTo(1)
+    }
+
+    @Test
+    fun givenTheScreenCameBack_whenReportingItAgain_thenTheListReloadsFromTheFirstPage() = runTest {
+        val viewModel = viewModel()
+        viewModel.onAction(CreatedWatchListsAction.OnScreenShown)
+
+        viewModel.onAction(CreatedWatchListsAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetWatchLists)).isEqualTo(2)
+    }
 }

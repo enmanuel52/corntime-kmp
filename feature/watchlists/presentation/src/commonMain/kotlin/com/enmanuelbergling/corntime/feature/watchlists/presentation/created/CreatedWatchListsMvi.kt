@@ -25,6 +25,11 @@ data class CreatedWatchListsState(
 }
 
 sealed interface CreatedWatchListsAction {
+    /**
+     * The screen became visible. The first time nothing happens (the first page is already loading); when
+     * it comes back (for example from a movie's details) the list reloads, since it may have changed there.
+     */
+    data object OnScreenShown : CreatedWatchListsAction
     data object OnLoadNextPage : CreatedWatchListsAction
     data class OnListClick(val list: WatchList) : CreatedWatchListsAction
     data object OnToggleForm : CreatedWatchListsAction

@@ -20,6 +20,11 @@ data class WatchListDetailsState(
 }
 
 sealed interface WatchListDetailsAction {
+    /**
+     * The screen became visible. The first time nothing happens (the first page is already loading); when
+     * it comes back (for example from a movie's details) the list reloads, since it may have changed there.
+     */
+    data object OnScreenShown : WatchListDetailsAction
     data object OnLoadNextPage : WatchListDetailsAction
     data class OnMovieClick(val movieId: Int) : WatchListDetailsAction
     data object OnBack : WatchListDetailsAction

@@ -161,4 +161,23 @@ class WatchlistHomeViewModelTest : MainDispatcherTest() {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun givenTheFirstTimeTheScreenIsShown_whenReportingIt_thenNothingIsReloaded() = runTest {
+        val viewModel = viewModel()
+
+        viewModel.onAction(WatchlistHomeAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetAccountWatchlistMovies)).isEqualTo(1)
+    }
+
+    @Test
+    fun givenTheScreenCameBack_whenReportingItAgain_thenTheListReloadsFromTheFirstPage() = runTest {
+        val viewModel = viewModel()
+        viewModel.onAction(WatchlistHomeAction.OnScreenShown)
+
+        viewModel.onAction(WatchlistHomeAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetAccountWatchlistMovies)).isEqualTo(2)
+    }
 }

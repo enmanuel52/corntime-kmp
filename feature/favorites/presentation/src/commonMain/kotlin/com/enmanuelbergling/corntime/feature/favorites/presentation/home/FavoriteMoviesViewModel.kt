@@ -35,6 +35,8 @@ class FavoriteMoviesViewModel(
         userRemote.removeMovieFromFavorites(removal.id).map { }
     }
 
+    private var wasShown = false
+
     private val _state = MutableStateFlow(FavoriteMoviesState())
     val state: StateFlow<FavoriteMoviesState> = _state.asStateFlow()
 
@@ -51,6 +53,7 @@ class FavoriteMoviesViewModel(
     fun onAction(action: FavoriteMoviesAction) {
         when (action) {
             FavoriteMoviesAction.OnLoadNextPage -> loadNextPage()
+            FavoriteMoviesAction.OnScreenShown -> onScreenShown()
             is FavoriteMoviesAction.OnMovieClick -> send(FavoriteMoviesEvent.NavigateToDetails(action.movieId))
             FavoriteMoviesAction.OnBack -> send(FavoriteMoviesEvent.NavigateBack)
             is FavoriteMoviesAction.OnRemove -> removals.remove(action.movieId, RemovalKind.Remove)
@@ -58,6 +61,11 @@ class FavoriteMoviesViewModel(
             FavoriteMoviesAction.OnRetryRemoval -> removals.retry()
             FavoriteMoviesAction.OnDismissRemovalError -> removals.dismissFailure()
         }
+    }
+
+    private fun onScreenShown() {
+        if (wasShown) viewModelScope.launch { paginator.refresh() }
+        wasShown = true
     }
 
     private fun loadNextPage() {

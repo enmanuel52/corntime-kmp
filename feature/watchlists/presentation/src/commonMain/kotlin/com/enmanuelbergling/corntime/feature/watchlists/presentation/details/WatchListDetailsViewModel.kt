@@ -39,6 +39,8 @@ class WatchListDetailsViewModel(
         }
     }
 
+    private var wasShown = false
+
     private val _state = MutableStateFlow(WatchListDetailsState(listId))
     val state: StateFlow<WatchListDetailsState> = _state.asStateFlow()
 
@@ -55,6 +57,7 @@ class WatchListDetailsViewModel(
     fun onAction(action: WatchListDetailsAction) {
         when (action) {
             WatchListDetailsAction.OnLoadNextPage -> loadNextPage()
+            WatchListDetailsAction.OnScreenShown -> onScreenShown()
             is WatchListDetailsAction.OnMovieClick -> send(WatchListDetailsEvent.NavigateToDetails(action.movieId))
             WatchListDetailsAction.OnBack -> send(WatchListDetailsEvent.NavigateBack)
             is WatchListDetailsAction.OnRemove -> removals.remove(action.movieId, RemovalKind.Remove)
@@ -65,6 +68,11 @@ class WatchListDetailsViewModel(
             WatchListDetailsAction.OnAddShortcut -> send(WatchListDetailsEvent.AddShortcut(listId))
             WatchListDetailsAction.OnRemoveShortcut -> send(WatchListDetailsEvent.RemoveShortcut(listId))
         }
+    }
+
+    private fun onScreenShown() {
+        if (wasShown) viewModelScope.launch { paginator.refresh() }
+        wasShown = true
     }
 
     private fun loadNextPage() {

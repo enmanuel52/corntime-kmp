@@ -29,6 +29,8 @@ class CreatedWatchListsViewModel(
 
     private val paginator = Paginator { page -> userRemote.getWatchLists(page) }
 
+    private var wasShown = false
+
     private val _state = MutableStateFlow(CreatedWatchListsState())
     val state: StateFlow<CreatedWatchListsState> = _state.asStateFlow()
 
@@ -43,6 +45,7 @@ class CreatedWatchListsViewModel(
     fun onAction(action: CreatedWatchListsAction) {
         when (action) {
             CreatedWatchListsAction.OnLoadNextPage -> loadNextPage()
+            CreatedWatchListsAction.OnScreenShown -> onScreenShown()
             is CreatedWatchListsAction.OnListClick ->
                 send(CreatedWatchListsEvent.NavigateToDetails(action.list.id, action.list.name))
 
@@ -61,6 +64,11 @@ class CreatedWatchListsViewModel(
             is CreatedWatchListsAction.OnDeleteList -> delete(action.listId)
             CreatedWatchListsAction.OnDismissError -> _state.update { it.copy(error = null) }
         }
+    }
+
+    private fun onScreenShown() {
+        if (wasShown) viewModelScope.launch { paginator.refresh() }
+        wasShown = true
     }
 
     private fun loadNextPage() {

@@ -22,6 +22,11 @@ data class WatchlistHomeState(
 }
 
 sealed interface WatchlistHomeAction {
+    /**
+     * The screen became visible. The first time nothing happens (the first page is already loading); when
+     * it comes back (for example from a movie's details) the list reloads, since it may have changed there.
+     */
+    data object OnScreenShown : WatchlistHomeAction
     /** Triggered when the last loaded item becomes visible; also retries after a failed page. */
     data object OnLoadNextPage : WatchlistHomeAction
     data class OnMovieClick(val movieId: Int) : WatchlistHomeAction

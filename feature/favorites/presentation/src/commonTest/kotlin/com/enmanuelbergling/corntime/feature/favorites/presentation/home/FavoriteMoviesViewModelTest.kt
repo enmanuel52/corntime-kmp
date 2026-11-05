@@ -180,4 +180,23 @@ class FavoriteMoviesViewModelTest : MainDispatcherTest() {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun givenTheFirstTimeTheScreenIsShown_whenReportingIt_thenNothingIsReloaded() = runTest {
+        val viewModel = viewModel()
+
+        viewModel.onAction(FavoriteMoviesAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetAccountFavoriteMovies)).isEqualTo(1)
+    }
+
+    @Test
+    fun givenTheScreenCameBack_whenReportingItAgain_thenTheListReloadsFromTheFirstPage() = runTest {
+        val viewModel = viewModel()
+        viewModel.onAction(FavoriteMoviesAction.OnScreenShown)
+
+        viewModel.onAction(FavoriteMoviesAction.OnScreenShown)
+
+        assertThat(user.callCount(UserRemoteFunction.GetAccountFavoriteMovies)).isEqualTo(2)
+    }
 }
