@@ -1,7 +1,40 @@
 import Shared
 import SwiftUI
 
+private enum WatchlistKind: Hashable {
+    case movies, tvShows
+}
+
+/// The account's watchlist, with a Movies | TV Shows segment; "My lists" only applies to movies.
 struct WatchlistScreen: View {
+    @State private var kind = WatchlistKind.movies
+    let navToMovieDetails: (Int32) -> Void
+    let navToTvShowDetails: (Int32) -> Void
+    let navToLists: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Picker("Watchlist", selection: $kind) {
+                Text("Movies").tag(WatchlistKind.movies)
+                Text("TV Shows").tag(WatchlistKind.tvShows)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.bottom, AppDimensions.medium)
+            .accessibilityIdentifier("watchlist.kind")
+
+            switch kind {
+            case .movies:
+                WatchlistMoviesContent(navToMovieDetails: navToMovieDetails, navToLists: navToLists)
+            case .tvShows:
+                WatchlistTvShowsContent(navToTvShowDetails: navToTvShowDetails)
+            }
+        }
+        .navigationTitle("Watchlist")
+    }
+}
+
+private struct WatchlistMoviesContent: View {
     @State private var model = ScreenModels.watchlistHome()
     let navToMovieDetails: (Int32) -> Void
     let navToLists: () -> Void
@@ -23,7 +56,6 @@ struct WatchlistScreen: View {
             onMovie: { send(WatchlistHomeActionOnMovieClick(movieId: $0)) },
             onLoadNext: { send(WatchlistHomeActionOnLoadNextPage.shared) }
         )
-        .navigationTitle("Watchlist")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { send(WatchlistHomeActionOnListsClick.shared) } label: {

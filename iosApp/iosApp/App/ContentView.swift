@@ -2,7 +2,7 @@ import Shared
 import SwiftUI
 
 enum AppTab {
-    case movies, actors, lists, search
+    case movies, tvShows, actors, lists, search
 }
 
 struct ContentView: View {
@@ -10,9 +10,11 @@ struct ContentView: View {
     let isLoggedIn: Bool
 
     @State private var query = ""
+    @State private var searchScope = SearchScopeKind.movies
     @State private var selectedTab = AppTab.movies
 
     @State private var navigation = [Route]()
+    @State private var tvNavigation = [Route]()
     @State private var actorsNavigation = [Route]()
     @State private var listsNavigation = [Route]()
     @State private var searchNavigation = [Route]()
@@ -35,6 +37,21 @@ struct ContentView: View {
                 .toolbar(navigation.isEmpty ? .visible : .hidden, for: .tabBar)
             }
 
+            Tab("TV Shows", systemImage: "tv", value: .tvShows) {
+                NavigationStack(path: $tvNavigation) {
+                    TvShowsScreen(
+                        navToTvShowSection: { tvNavigation.append(.tvShowSection($0)) },
+                        navToTvShowDetails: { tvNavigation.append(.tvShowDetails($0)) },
+                        isLoggedIn: isLoggedIn,
+                        navToFavorites: { tvNavigation.append(.favoriteTvShows) }
+                    )
+                    .navigationDestination(for: Route.self) { route in
+                        destination(route) { tvNavigation.append($0) }
+                    }
+                }
+                .toolbar(tvNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
+            }
+
             Tab("Actors", systemImage: "person.2", value: .actors) {
                 NavigationStack(path: $actorsNavigation) {
                     ActorsScreen { actorsNavigation.append(.actorDetails($0, name: $1)) }
@@ -50,6 +67,7 @@ struct ContentView: View {
                     NavigationStack(path: $listsNavigation) {
                         WatchlistScreen(
                             navToMovieDetails: { listsNavigation.append(.movieDetails($0)) },
+                            navToTvShowDetails: { listsNavigation.append(.tvShowDetails($0)) },
                             navToLists: { listsNavigation.append(.createdLists) }
                         )
                         .navigationDestination(for: Route.self) { route in
@@ -62,12 +80,21 @@ struct ContentView: View {
 
             Tab(value: .search, role: .search) {
                 NavigationStack(path: $searchNavigation) {
-                    SearchScreen(query: query) { searchNavigation.append(.movieDetails($0)) }
+                    SearchScreen(
+                        query: query,
+                        scope: searchScope,
+                        navToMovieDetails: { searchNavigation.append(.movieDetails($0)) },
+                        navToTvShowDetails: { searchNavigation.append(.tvShowDetails($0)) }
+                    )
                         .navigationDestination(for: Route.self) { route in
                             destination(route) { searchNavigation.append($0) }
                         }
                 }
                 .searchable(text: $query)
+                .searchScopes($searchScope) {
+                    Text("Movies").tag(SearchScopeKind.movies)
+                    Text("TV Shows").tag(SearchScopeKind.tvShows)
+                }
                 .toolbar(searchNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
             }
         }
@@ -98,6 +125,29 @@ struct ContentView: View {
             SettingsScreen { navigate(.login) }
         case .login:
             LoginScreen(onLoggedIn: {})
+        case .tvShowDetails(let tvShowId):
+            TvShowDetailsScreen(
+                tvShowId: tvShowId,
+                navToSeasons: { navigate(.seasons(tvShowId: tvShowId)) },
+                navToEpisodes: { navigate(.episodes(tvShowId: tvShowId, seasonNumber: $0)) },
+                navToActorDetails: { navigate(.actorDetails($0, name: $1)) }
+            )
+        case .tvShowSection(let section):
+            TvShowSectionScreen(section: section) { navigate(.tvShowDetails($0)) }
+        case .seasons(let tvShowId):
+            SeasonsScreen(tvShowId: tvShowId) { navigate(.episodes(tvShowId: tvShowId, seasonNumber: $0)) }
+        case .episodes(let tvShowId, let seasonNumber):
+            EpisodesScreen(tvShowId: tvShowId, seasonNumber: seasonNumber) {
+                navigate(.episodeDetails(tvShowId: tvShowId, seasonNumber: seasonNumber, episodeNumber: $0))
+            }
+        case .episodeDetails(let tvShowId, let seasonNumber, let episodeNumber):
+            EpisodeDetailsScreen(
+                tvShowId: tvShowId,
+                seasonNumber: seasonNumber,
+                episodeNumber: episodeNumber
+            ) { navigate(.actorDetails($0, name: $1)) }
+        case .favoriteTvShows:
+            FavoriteTvShowsScreen { navigate(.tvShowDetails($0)) }
         }
     }
 }
