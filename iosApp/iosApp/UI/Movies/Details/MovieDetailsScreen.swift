@@ -3,9 +3,9 @@ import SwiftUI
 
 struct MovieDetailsScreen: View {
     @State private var model: ScreenModel<MovieDetailsViewModel, MovieDetailsState>
-    let navToActorDetails: (Int32) -> Void
+    let navToActorDetails: (Int32, String) -> Void
 
-    init(movieId: Int32, navToActorDetails: @escaping (Int32) -> Void) {
+    init(movieId: Int32, navToActorDetails: @escaping (Int32, String) -> Void) {
         self.navToActorDetails = navToActorDetails
         _model = State(initialValue: ScreenModels.movieDetails(movieId: movieId))
     }
@@ -93,7 +93,7 @@ struct MovieDetailsScreen: View {
         .task {
             for await event in model.viewModel.events {
                 switch onEnum(of: event) {
-                case .navigateToActor(let actor): navToActorDetails(actor.actorId)
+                case .navigateToActor(let actor): navToActorDetails(actor.actorId, actor.name)
                 case .navigateBack: break  // the system back button pops the stack
                 }
             }
