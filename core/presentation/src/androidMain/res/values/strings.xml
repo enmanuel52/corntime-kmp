@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_unauthorized_message">Permission denied, log in and try again</string>
+    <string name="default_net_exception_message">An error just happened, check your network connection and try again</string>
+    <string name="net_time_out_exception_message">Waiting time for response has ended, check your internet connection and try again</string>
+    <string name="no_internet_message">No internet connection, check your network and try again</string>
+</resources>
