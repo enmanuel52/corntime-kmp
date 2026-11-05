@@ -23,6 +23,14 @@ enum ScreenModels {
         ScreenModel(make: { ViewModels.shared.app() }, state: { $0.state })
     }
 
+    static func actors() -> ScreenModel<ActorsViewModel, ActorsState> {
+        ScreenModel(make: { ViewModels.shared.actors() }, state: { $0.state })
+    }
+
+    static func actorDetails(actorId: Int32) -> ScreenModel<ActorDetailsViewModel, ActorDetailsState> {
+        ScreenModel(make: { ViewModels.shared.actorDetails(actorId: actorId) }, state: { $0.state })
+    }
+
     static func login() -> ScreenModel<LoginViewModel, LoginState> {
         ScreenModel(make: { ViewModels.shared.login() }, state: { $0.state })
     }
