@@ -1,4 +1,4 @@
-rootProject.name = "CornTimeKmp"
+rootProject.name = "Corntimekmp"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -42,3 +42,6 @@ include(":core:testing")
 include(":core:datastore")
 include(":core:presentation")
 include(":core:design-system")
+
+include(":feature:movies:domain")
+include(":feature:movies:presentation")

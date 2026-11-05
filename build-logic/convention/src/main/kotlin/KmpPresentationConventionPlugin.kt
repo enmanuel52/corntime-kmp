@@ -16,6 +16,7 @@ class KmpPresentationConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply("corntime.kmp.library")
             pluginManager.apply("corntime.koin")
+            pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
             configureComposeCompiler(androidOnly = true)
 
             kotlinMultiplatform {
@@ -28,6 +29,7 @@ class KmpPresentationConventionPlugin : Plugin<Project> {
                 sourceSets.commonMain.dependencies {
                     api(libs.library("androidx-lifecycle-viewmodel"))
                     implementation(libs.library("koin-core-viewmodel"))
+                    implementation(libs.library("kotlinx-serialization-json"))
                     implementation(libs.library("kotlinx-collections-immutable"))
                     if (path != ":core:presentation") {
                         implementation(project(":core:presentation"))

@@ -1,7 +1,5 @@
 package com.enmanuelbergling.corntime.core.designsystem.components.common
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.enmanuelbergling.corntime.core.presentation.image.ImageUrls
 import com.enmanuelbergling.corntime.core.designsystem.R
-import com.enmanuelbergling.corntime.core.designsystem.core.BoundsTransition
-import com.enmanuelbergling.corntime.core.designsystem.core.LocalSharedTransitionScope
+import com.enmanuelbergling.corntime.core.designsystem.core.sharedBoundsIfAvailable
+import com.enmanuelbergling.corntime.core.designsystem.core.sharedElementIfAvailable
 import com.enmanuelbergling.corntime.core.designsystem.core.dimen
 import com.valentinilk.shimmer.shimmer
 
@@ -77,16 +75,13 @@ fun ActorsRowPlaceholder(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun AnimatedContentScope.ActorCard(
+fun ActorCard(
     imageUrl: String?,
     name: String,
     modifier: Modifier = Modifier,
     onCLick: () -> Unit,
 ) {
-    val sharedTransitionScope = LocalSharedTransitionScope.current!!
-
     Column(modifier) {
         ElevatedCard(onCLick) {
             AsyncImage(
@@ -96,14 +91,8 @@ fun AnimatedContentScope.ActorCard(
                 placeholder = painterResource(id = R.drawable.mr_bean),
                 modifier = Modifier
                     .aspectRatio(.65f)
-                        then with(sharedTransitionScope) {
-                    Modifier.sharedElement(
-                         rememberSharedContentState(key = imageUrl.orEmpty()),
-                        animatedVisibilityScope = this@ActorCard,
-                        boundsTransform = BoundsTransition
-                    )
-                        .clip(CardDefaults.elevatedShape)
-                },
+                    .sharedElementIfAvailable(imageUrl.orEmpty())
+                    .clip(CardDefaults.elevatedShape),
                 contentScale = ContentScale.Crop
             )
         }
@@ -115,13 +104,7 @@ fun AnimatedContentScope.ActorCard(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(MaterialTheme.dimen.small)
-                    then with(sharedTransitionScope) {
-                Modifier.sharedBounds(
-                    rememberSharedContentState(key = name),
-                    animatedVisibilityScope = this@ActorCard,
-                    boundsTransform = BoundsTransition
-                )
-            },
+                .sharedBoundsIfAvailable(name),
             maxLines = 2,
             minLines = 2,
             overflow = TextOverflow.Ellipsis

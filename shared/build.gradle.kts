@@ -9,13 +9,32 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            // Everything SwiftUI touches must be exported from the umbrella framework.
             export(projects.core.domain)
+            export(projects.core.presentation)
+            export(projects.feature.movies.domain)
+            export(projects.feature.movies.presentation)
         }
     }
 
     sourceSets {
         commonMain.dependencies {
             api(projects.core.domain)
+            api(projects.core.presentation)
+            api(projects.feature.movies.domain)
+            api(projects.feature.movies.presentation)
+            implementation(projects.core.data)
+            implementation(projects.core.datastore)
+            implementation(libs.koin.core)
+        }
+        // Fakes for iOS UI-test launches only; Android never links them (and their JUnit) into the app.
+        iosMain.dependencies {
+            implementation(projects.core.testing)
+        }
+        commonTest.dependencies {
+            implementation(projects.core.testing)
+            implementation(libs.ktor.client.mock)
+            implementation(libs.koin.test)
         }
     }
 }

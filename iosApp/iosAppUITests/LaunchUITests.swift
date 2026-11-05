@@ -6,11 +6,11 @@ final class LaunchUITests: XCTestCase {
     }
 
     @MainActor
-    func testAppLaunchesAndShowsRootContent() throws {
+    func testAppLaunchesAndShowsMovies() throws {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTesting"]
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["app.title"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.navigationBars["Movies"].waitForExistence(timeout: 10))
     }
 }
