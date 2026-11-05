@@ -44,3 +44,4 @@ include(":core:presentation")
 include(":core:design-system")
 
 include(":feature:movies:domain")
+include(":feature:movies:presentation")
