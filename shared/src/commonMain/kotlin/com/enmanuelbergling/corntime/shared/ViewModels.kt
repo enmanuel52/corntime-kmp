@@ -1,6 +1,8 @@
 package com.enmanuelbergling.corntime.shared
 
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
+import com.enmanuelbergling.corntime.feature.actor.presentation.details.ActorDetailsViewModel
+import com.enmanuelbergling.corntime.feature.actor.presentation.home.ActorsViewModel
 import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
 import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
@@ -19,6 +21,11 @@ object ViewModels {
     fun login(): ScopedViewModel<LoginViewModel> = scoped { koin.get<LoginViewModel>() }
 
     fun settings(): ScopedViewModel<SettingsViewModel> = scoped { koin.get<SettingsViewModel>() }
+
+    fun actors(): ScopedViewModel<ActorsViewModel> = scoped { koin.get<ActorsViewModel>() }
+
+    fun actorDetails(actorId: Int): ScopedViewModel<ActorDetailsViewModel> =
+        scoped { koin.get<ActorDetailsViewModel> { parametersOf(actorId) } }
 
     fun movies(): ScopedViewModel<MoviesViewModel> = scoped { koin.get<MoviesViewModel>() }
 
