@@ -27,6 +27,10 @@ kotlin {
             implementation(projects.core.datastore)
             implementation(libs.koin.core)
         }
+        // Fakes for iOS UI-test launches only; Android never links them (and their JUnit) into the app.
+        iosMain.dependencies {
+            implementation(projects.core.testing)
+        }
         commonTest.dependencies {
             implementation(projects.core.testing)
             implementation(libs.ktor.client.mock)
