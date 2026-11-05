@@ -45,5 +45,6 @@ sealed interface MovieDetailsAction {
 
 sealed interface MovieDetailsEvent {
     data object NavigateBack : MovieDetailsEvent
-    data class NavigateToActor(val actorId: Int) : MovieDetailsEvent
+    /** Name and photo are what the actor screen shows right away, before its own request finishes. */
+    data class NavigateToActor(val actorId: Int, val name: String, val profilePath: String?) : MovieDetailsEvent
 }
