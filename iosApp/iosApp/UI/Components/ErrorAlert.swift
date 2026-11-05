@@ -6,7 +6,8 @@ extension View {
     func errorAlert(
         _ error: UiError?,
         onDismiss: @escaping () -> Void,
-        onRetry: (() -> Void)? = nil
+        onRetry: (() -> Void)? = nil,
+        message: @escaping (UiError) -> String = { $0.message }
     ) -> some View {
         alert(
             "Error",
@@ -21,7 +22,7 @@ extension View {
             }
         } message: {
             if let error {
-                Text(error.message)
+                Text(message(error))
             }
         }
     }
