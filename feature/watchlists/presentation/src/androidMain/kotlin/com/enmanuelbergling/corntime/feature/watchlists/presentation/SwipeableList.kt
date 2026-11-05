@@ -31,10 +31,12 @@ import com.enmanuelbergling.corntime.core.designsystem.components.OnceLottieAnim
 import com.enmanuelbergling.corntime.core.designsystem.components.SwipeToDismissContainer
 import com.enmanuelbergling.corntime.core.designsystem.components.common.MovieLandCard
 import com.enmanuelbergling.corntime.core.designsystem.components.common.MovieLandCardPlaceholder
+import com.enmanuelbergling.corntime.core.designsystem.components.common.TvShowLandCard
 import com.enmanuelbergling.corntime.core.designsystem.core.OnLoadMore
 import com.enmanuelbergling.corntime.core.designsystem.core.dimen
 import com.enmanuelbergling.corntime.core.designsystem.core.shimmerIf
 import com.enmanuelbergling.corntime.core.domain.model.movie.Movie
+import com.enmanuelbergling.corntime.core.domain.model.tv.TvShow
 import com.enmanuelbergling.corntime.core.presentation.error.messageResource
 import com.enmanuelbergling.corntime.core.presentation.error.toUiError
 import com.enmanuelbergling.corntime.core.presentation.paging.PagingState
@@ -59,6 +61,75 @@ internal fun SwipeableMovieList(
     onRemove: (movieId: Int) -> Unit,
     onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier,
+) {
+    SwipeableList(
+        items = movies,
+        itemId = { it.id },
+        paging = paging,
+        isEmpty = isEmpty,
+        emptyMessage = emptyMessage,
+        onMoveToFavorites = onMoveToFavorites,
+        onRemove = onRemove,
+        onLoadNextPage = onLoadNextPage,
+        placeholder = { MovieLandCardPlaceholder(Modifier.fillMaxWidth()) },
+        modifier = modifier,
+    ) { movie ->
+        MovieLandCard(
+            movie = movie,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface),
+        ) { onMovieClick(movie.id) }
+    }
+}
+
+/** The same swipeable list for TV shows (the watchlist's TV segment). */
+@Composable
+internal fun SwipeableTvShowList(
+    tvShows: List<TvShow>,
+    paging: PagingState<TvShow>,
+    isEmpty: Boolean,
+    emptyMessage: String,
+    onTvShowClick: (tvShowId: Int) -> Unit,
+    onMoveToFavorites: (tvShowId: Int) -> Unit,
+    onRemove: (tvShowId: Int) -> Unit,
+    onLoadNextPage: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SwipeableList(
+        items = tvShows,
+        itemId = { it.id },
+        paging = paging,
+        isEmpty = isEmpty,
+        emptyMessage = emptyMessage,
+        onMoveToFavorites = onMoveToFavorites,
+        onRemove = onRemove,
+        onLoadNextPage = onLoadNextPage,
+        placeholder = { MovieLandCardPlaceholder(Modifier.fillMaxWidth()) },
+        modifier = modifier,
+    ) { tvShow ->
+        TvShowLandCard(
+            tvShow = tvShow,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface),
+        ) { onTvShowClick(tvShow.id) }
+    }
+}
+
+@Composable
+private fun <T> SwipeableList(
+    items: List<T>,
+    itemId: (T) -> Int,
+    paging: PagingState<T>,
+    isEmpty: Boolean,
+    emptyMessage: String,
+    onMoveToFavorites: (id: Int) -> Unit,
+    onRemove: (id: Int) -> Unit,
+    onLoadNextPage: () -> Unit,
+    placeholder: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    itemContent: @Composable (T) -> Unit,
 ) {
     val error = paging.error
     when {
@@ -85,11 +156,11 @@ internal fun SwipeableMovieList(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimen.small),
                 userScrollEnabled = !paging.isLoadingFirstPage,
             ) {
-                items(movies, key = { movie -> movie.id }) { movie ->
+                items(items, key = { item -> itemId(item) }) { item ->
                     SwipeToDismissContainer(
                         visible = true,
-                        onDismissFromStartToEnd = { onMoveToFavorites(movie.id) },
-                        onDismissFromEndToStart = { onRemove(movie.id) },
+                        onDismissFromStartToEnd = { onMoveToFavorites(itemId(item)) },
+                        onDismissFromEndToStart = { onRemove(itemId(item)) },
                         containerColorDismissFromStart = MaterialTheme.colorScheme.primaryContainer.copy(alpha = .3f),
                         containerColorDismissFromEnd = MaterialTheme.colorScheme.errorContainer.copy(alpha = .3f),
                         backgroundIcon = { direction ->
@@ -113,17 +184,12 @@ internal fun SwipeableMovieList(
                         },
                         modifier = Modifier.animateItem(),
                     ) {
-                        MovieLandCard(
-                            movie = movie,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surface),
-                        ) { onMovieClick(movie.id) }
+                        itemContent(item)
                     }
                 }
 
-                if (paging.isLoadingFirstPage) items(12) { MovieLandCardPlaceholder(Modifier.fillMaxWidth()) }
-                if (paging.isLoadingMore) items(3) { MovieLandCardPlaceholder(Modifier.fillMaxWidth()) }
+                if (paging.isLoadingFirstPage) items(12) { placeholder() }
+                if (paging.isLoadingMore) items(3) { placeholder() }
                 if (error != null && paging.items.isNotEmpty()) {
                     item {
                         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {

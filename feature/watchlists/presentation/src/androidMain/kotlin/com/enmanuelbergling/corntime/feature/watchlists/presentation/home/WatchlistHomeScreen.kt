@@ -1,5 +1,7 @@
 package com.enmanuelbergling.corntime.feature.watchlists.presentation.home
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,105 +14,158 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.enmanuelbergling.corntime.core.designsystem.R as DesignR
-import com.enmanuelbergling.corntime.core.designsystem.components.DefaultErrorDialog
-import com.enmanuelbergling.corntime.core.designsystem.components.UndoSnackbarEffect
-import com.enmanuelbergling.corntime.core.presentation.error.messageResource
 import com.enmanuelbergling.corntime.core.presentation.event.ObserveAsEvents
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.R
-import com.enmanuelbergling.corntime.feature.watchlists.presentation.SwipeableMovieList
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsAction
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsContent
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsEvent
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsState
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+
+/** The segments of the watchlist: movies and TV shows, switched from the navigation bar. */
+enum class WatchlistTab(
+    @StringRes val labelRes: Int,
+    @DrawableRes val selectedIconRes: Int,
+    @DrawableRes val unselectedIconRes: Int,
+) {
+    Movies(R.string.watchlist_movies, DesignR.drawable.film_solid, DesignR.drawable.film_outline),
+    TvShows(R.string.watchlist_tv_shows, DesignR.drawable.tv_solid, DesignR.drawable.tv_outline),
+}
+
+object WatchlistHomeTags {
+    fun tab(tab: WatchlistTab) = "watchlist_tab_${tab.name}"
+}
 
 @Composable
 fun WatchlistHomeRoot(
     onMovieDetails: (movieId: Int) -> Unit,
+    onTvShowDetails: (tvShowId: Int) -> Unit,
     onNavigateToLists: () -> Unit,
     onBack: () -> Unit,
+    initialTab: WatchlistTab = WatchlistTab.Movies,
 ) {
-    val viewModel = koinViewModel<WatchlistHomeViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    var selectedTab by rememberSaveable { mutableStateOf(initialTab) }
 
-    LaunchedEffect(Unit) { viewModel.onAction(WatchlistHomeAction.OnScreenShown) }
+    val moviesViewModel = koinViewModel<WatchlistHomeViewModel>()
+    val tvShowsViewModel = koinViewModel<WatchlistTvShowsViewModel>()
+    val moviesState by moviesViewModel.state.collectAsStateWithLifecycle()
+    val tvShowsState by tvShowsViewModel.state.collectAsStateWithLifecycle()
 
-    ObserveAsEvents(viewModel.events) { event ->
+    LaunchedEffect(Unit) {
+        moviesViewModel.onAction(WatchlistHomeAction.OnScreenShown)
+        tvShowsViewModel.onAction(WatchlistTvShowsAction.OnScreenShown)
+    }
+
+    ObserveAsEvents(moviesViewModel.events) { event ->
         when (event) {
             is WatchlistHomeEvent.NavigateToDetails -> onMovieDetails(event.movieId)
             WatchlistHomeEvent.NavigateToLists -> onNavigateToLists()
         }
     }
+    ObserveAsEvents(tvShowsViewModel.events) { event ->
+        when (event) {
+            is WatchlistTvShowsEvent.NavigateToDetails -> onTvShowDetails(event.tvShowId)
+        }
+    }
 
-    WatchlistHomeScreen(state = state, onAction = viewModel::onAction, onBack = onBack)
+    WatchlistHomeScreen(
+        selectedTab = selectedTab,
+        onTabSelected = { selectedTab = it },
+        moviesState = moviesState,
+        onMoviesAction = moviesViewModel::onAction,
+        tvShowsState = tvShowsState,
+        onTvShowsAction = tvShowsViewModel::onAction,
+        onBack = onBack,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WatchlistHomeScreen(
-    state: WatchlistHomeState,
-    onAction: (WatchlistHomeAction) -> Unit,
+    selectedTab: WatchlistTab,
+    onTabSelected: (WatchlistTab) -> Unit,
+    moviesState: WatchlistHomeState,
+    onMoviesAction: (WatchlistHomeAction) -> Unit,
+    tvShowsState: WatchlistTvShowsState,
+    onTvShowsAction: (WatchlistTvShowsAction) -> Unit,
     onBack: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    UndoSnackbarEffect(
-        undoable = state.undoable,
-        hostState = snackbarHostState,
-        removedMessage = stringResource(R.string.movie_removed_from_watchlist),
-        movedToFavoritesMessage = stringResource(R.string.movie_added_to_favorites),
-        undoLabel = stringResource(DesignR.string.undo),
-        onUndo = { onAction(WatchlistHomeAction.OnUndo(it)) },
-    )
-
-    state.removalError?.let { error ->
-        DefaultErrorDialog(
-            onDismissDialog = { onAction(WatchlistHomeAction.OnDismissRemovalError) },
-            message = stringResource(error.messageResource),
-            onRetry = { onAction(WatchlistHomeAction.OnRetryRemoval) },
-        )
-    }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(DesignR.string.watchlist)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
+    NavigationSuiteScaffold(
+        navigationSuiteItems = {
+            WatchlistTab.entries.forEach { tab ->
+                val selected = tab == selectedTab
+                item(
+                    selected = selected,
+                    onClick = { onTabSelected(tab) },
+                    modifier = Modifier.testTag(WatchlistHomeTags.tab(tab)),
+                    icon = {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(DesignR.string.back_icon),
+                            painter = painterResource(if (selected) tab.selectedIconRes else tab.unselectedIconRes),
+                            contentDescription = stringResource(tab.labelRes),
                         )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onAction(WatchlistHomeAction.OnListsClick) }) {
-                        Icon(
-                            painter = painterResource(DesignR.drawable.bookmark_outline),
-                            contentDescription = stringResource(R.string.lists_icon),
-                        )
-                    }
-                },
-            )
+                    },
+                    label = { Text(stringResource(tab.labelRes)) },
+                )
+            }
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
-        SwipeableMovieList(
-            movies = state.movies,
-            paging = state.paging,
-            isEmpty = state.isEmpty,
-            emptyMessage = stringResource(R.string.watchlist_is_empty),
-            onMovieClick = { onAction(WatchlistHomeAction.OnMovieClick(it)) },
-            onMoveToFavorites = { onAction(WatchlistHomeAction.OnMoveToFavorites(it)) },
-            onRemove = { onAction(WatchlistHomeAction.OnRemove(it)) },
-            onLoadNextPage = { onAction(WatchlistHomeAction.OnLoadNextPage) },
-            modifier = Modifier.padding(paddingValues),
-        )
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = stringResource(DesignR.string.watchlist)) },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(DesignR.string.back_icon),
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { onMoviesAction(WatchlistHomeAction.OnListsClick) }) {
+                            Icon(
+                                painter = painterResource(DesignR.drawable.bookmark_outline),
+                                contentDescription = stringResource(R.string.lists_icon),
+                            )
+                        }
+                    },
+                )
+            },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+        ) { paddingValues ->
+            when (selectedTab) {
+                WatchlistTab.Movies -> WatchlistMoviesContent(
+                    state = moviesState,
+                    onAction = onMoviesAction,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier.padding(paddingValues),
+                )
+
+                WatchlistTab.TvShows -> WatchlistTvShowsContent(
+                    state = tvShowsState,
+                    onAction = onTvShowsAction,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier.padding(paddingValues),
+                )
+            }
+        }
     }
 }

@@ -21,12 +21,14 @@ fun EntryProviderScope<NavKey>.watchlistEntries(
     onNavigate: (NavKey) -> Unit,
     onBack: () -> Unit,
     onMovieDetails: (movieId: Int) -> Unit,
+    onTvShowDetails: (tvShowId: Int) -> Unit,
     shortcuts: ListShortcuts = ListShortcuts.None,
     onListDeleted: (listId: Int) -> Unit = {},
 ) {
     entry<WatchlistKey> {
         WatchlistHomeRoot(
             onMovieDetails = onMovieDetails,
+            onTvShowDetails = onTvShowDetails,
             onNavigateToLists = { onNavigate(CreatedListsKey) },
             onBack = onBack,
         )

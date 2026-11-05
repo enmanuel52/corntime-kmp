@@ -15,4 +15,9 @@
     <string name="delete_list_title">Delete this list?</string>
     <string name="shortcut_icon">shortcut icon</string>
     <string name="lists_icon">lists icon</string>
+    <string name="watchlist_movies">Movies</string>
+    <string name="watchlist_tv_shows">TV Shows</string>
+    <string name="tv_show_removed_from_watchlist">TV show removed from watchlist</string>
+    <string name="tv_show_added_to_favorites">TV show added to favorites</string>
+    <string name="watchlist_tv_shows_is_empty">Your TV shows watchlist is empty</string>
 </resources>
