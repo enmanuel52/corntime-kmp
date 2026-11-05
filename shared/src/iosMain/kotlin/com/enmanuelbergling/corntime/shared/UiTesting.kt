@@ -4,6 +4,7 @@ import com.enmanuelbergling.corntime.core.domain.datasource.preferences.AuthPref
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SearchSuggestionPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.ActorRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.sync.MovieSyncScheduler
 import com.enmanuelbergling.corntime.core.domain.sync.TvShowSyncScheduler
@@ -20,7 +21,9 @@ import com.enmanuelbergling.corntime.core.testing.datasource.FakeActorRemoteData
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthRemoteDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeOnboardingPreferenceDataSource
+import com.enmanuelbergling.corntime.core.testing.data.FakeMovieData
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeMovieRemoteDataSource
+import com.enmanuelbergling.corntime.core.testing.datasource.FakeSearchSuggestionPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeSettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeTvRemoteDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeUserPreferenceDataSource
@@ -41,6 +44,7 @@ object UiTesting {
 
     private val movies = FakeMovieRemoteDataSource().apply {
         totalPages = 3
+        reviews = FakeMovieData.REVIEWS
         fail(MovieRemoteFunction.GetMovieAccountStates, DataError.Network.Unauthorized)
     }
 
@@ -86,6 +90,7 @@ object UiTesting {
         single<TvRemoteDataSource> { FakeTvRemoteDataSource() }
         single<UserPreferenceDataSource> { FakeUserPreferenceDataSource() }
         single<AuthPreferenceDataSource> { session }
+        single<SearchSuggestionPreferenceDataSource> { FakeSearchSuggestionPreferenceDataSource() }
         single<SettingsPreferenceDataSource> { FakeSettingsPreferenceDataSource() }
     }
 }

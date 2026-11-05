@@ -5,4 +5,39 @@
     <string name="now_playing_movies">Películas en cartelera</string>
     <string name="popular_movies">Películas populares</string>
     <string name="no_movies_found">No se encontraron películas</string>
+    <plurals name="reviews_count">
+        <item quantity="one">(%1$d reseña)</item>
+        <item quantity="other">(%1$d reseñas)</item>
+    </plurals>
+    <plurals name="posted_years_ago">
+        <item quantity="one">hace %1$d año</item>
+        <item quantity="other">hace %1$d años</item>
+    </plurals>
+    <plurals name="posted_months_ago">
+        <item quantity="one">hace %1$d mes</item>
+        <item quantity="other">hace %1$d meses</item>
+    </plurals>
+    <plurals name="posted_weeks_ago">
+        <item quantity="one">hace %1$d semana</item>
+        <item quantity="other">hace %1$d semanas</item>
+    </plurals>
+    <plurals name="posted_days_ago">
+        <item quantity="one">hace %1$d día</item>
+        <item quantity="other">hace %1$d días</item>
+    </plurals>
+    <plurals name="posted_hours_ago">
+        <item quantity="one">hace %1$d hora</item>
+        <item quantity="other">hace %1$d horas</item>
+    </plurals>
+    <plurals name="posted_minutes_ago">
+        <item quantity="one">hace %1$d minuto</item>
+        <item quantity="other">hace %1$d minutos</item>
+    </plurals>
+    <string name="posted_just_now">Justo ahora</string>
+    <string name="no_reviews_yet">Aún no hay reseñas</string>
+    <string name="remove_rating">Quitar mi valoración</string>
+    <string name="more_genres">%1$d más</string>
+    <string name="recent_searches">Búsquedas recientes</string>
+    <string name="delete_suggestion_icon">eliminar búsqueda reciente</string>
+    <string name="your_rating_icon">tu valoración</string>
 </resources>

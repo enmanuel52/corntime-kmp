@@ -31,6 +31,8 @@ import com.enmanuelbergling.corntime.feature.tvshows.presentation.search.TvShowS
 import com.enmanuelbergling.corntime.feature.tvshows.presentation.seasons.SeasonsViewModel
 import com.enmanuelbergling.corntime.feature.tvshows.presentation.section.TvShowSectionViewModel
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsViewModel
+import com.enmanuelbergling.corntime.feature.movies.presentation.filter.MoviesFilterViewModel
+import com.enmanuelbergling.corntime.feature.movies.presentation.reviews.ReviewsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.section.MovieSectionViewModel
 import io.ktor.client.engine.mock.MockEngine
@@ -87,6 +89,8 @@ class KoinGraphTest : MainDispatcherTest() {
         assertThat(koin.get<MoviesViewModel>()).isNotNull()
         assertThat(koin.get<MovieDetailsViewModel> { parametersOf(1) }).isNotNull()
         assertThat(koin.get<MovieSearchViewModel>()).isNotNull()
+        assertThat(koin.get<MoviesFilterViewModel>()).isNotNull()
+        assertThat(koin.get<ReviewsViewModel> { parametersOf(1, 4.0, 100) }).isNotNull()
         MovieSection.entries.forEach { section ->
             assertThat(koin.get<MovieSectionViewModel> { parametersOf(section) }).isNotNull()
         }

@@ -11,7 +11,9 @@ import com.enmanuelbergling.corntime.feature.watchlists.presentation.created.Cre
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.details.WatchListDetailsViewModel
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.home.WatchlistHomeViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
+import com.enmanuelbergling.corntime.feature.movies.presentation.filter.MoviesFilterViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
+import com.enmanuelbergling.corntime.feature.movies.presentation.reviews.ReviewsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.section.MovieSectionViewModel
 import com.enmanuelbergling.corntime.feature.favorites.presentation.tvshows.FavoriteTvShowsViewModel
@@ -58,6 +60,12 @@ object ViewModels {
 
     fun movieSection(section: MovieSection): ScopedViewModel<MovieSectionViewModel> =
         scoped { koin.get<MovieSectionViewModel> { parametersOf(section) } }
+
+    fun moviesFilter(): ScopedViewModel<MoviesFilterViewModel> = scoped { koin.get<MoviesFilterViewModel>() }
+
+    /** [averageRating] is on the 0..5 star scale, as the movie details report it. */
+    fun reviews(movieId: Int, averageRating: Double, totalReviews: Int): ScopedViewModel<ReviewsViewModel> =
+        scoped { koin.get<ReviewsViewModel> { parametersOf(movieId, averageRating, totalReviews) } }
 
     fun movieSearch(): ScopedViewModel<MovieSearchViewModel> = scoped { koin.get<MovieSearchViewModel>() }
 

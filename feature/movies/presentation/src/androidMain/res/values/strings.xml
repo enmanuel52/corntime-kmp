@@ -5,4 +5,39 @@
     <string name="now_playing_movies">Now Playing Movies</string>
     <string name="popular_movies">Popular Movies</string>
     <string name="no_movies_found">No movies found</string>
+    <plurals name="reviews_count">
+        <item quantity="one">(%1$d review)</item>
+        <item quantity="other">(%1$d reviews)</item>
+    </plurals>
+    <plurals name="posted_years_ago">
+        <item quantity="one">%1$d year ago</item>
+        <item quantity="other">%1$d years ago</item>
+    </plurals>
+    <plurals name="posted_months_ago">
+        <item quantity="one">%1$d month ago</item>
+        <item quantity="other">%1$d months ago</item>
+    </plurals>
+    <plurals name="posted_weeks_ago">
+        <item quantity="one">%1$d week ago</item>
+        <item quantity="other">%1$d weeks ago</item>
+    </plurals>
+    <plurals name="posted_days_ago">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
+    <plurals name="posted_hours_ago">
+        <item quantity="one">%1$d hour ago</item>
+        <item quantity="other">%1$d hours ago</item>
+    </plurals>
+    <plurals name="posted_minutes_ago">
+        <item quantity="one">%1$d minute ago</item>
+        <item quantity="other">%1$d minutes ago</item>
+    </plurals>
+    <string name="posted_just_now">Just now</string>
+    <string name="no_reviews_yet">No reviews yet</string>
+    <string name="remove_rating">Remove my rating</string>
+    <string name="more_genres">%1$d more</string>
+    <string name="recent_searches">Recent searches</string>
+    <string name="delete_suggestion_icon">delete recent search</string>
+    <string name="your_rating_icon">your rating</string>
 </resources>

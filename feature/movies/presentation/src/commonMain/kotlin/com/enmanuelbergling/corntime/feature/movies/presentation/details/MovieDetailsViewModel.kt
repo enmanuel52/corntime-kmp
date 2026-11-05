@@ -13,6 +13,7 @@ import com.enmanuelbergling.corntime.core.domain.util.Result
 import com.enmanuelbergling.corntime.core.presentation.error.toUiError
 import com.enmanuelbergling.corntime.feature.movies.domain.details.MovieDetailsChain
 import com.enmanuelbergling.corntime.feature.movies.domain.details.MovieDetailsChainRequest
+import com.enmanuelbergling.corntime.feature.movies.domain.reviews.RatingBreakdownSimulator
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,6 +48,7 @@ class MovieDetailsViewModel(
             MovieDetailsAction.OnDismissError -> _state.update { it.copy(error = null) }
             MovieDetailsAction.OnWatchlistClick -> toggleWatchlist()
             MovieDetailsAction.OnFavoriteClick -> toggleFavorite()
+            MovieDetailsAction.OnReviewsClick -> openReviews()
             is MovieDetailsAction.OnPersonClick -> openPerson(action.personId)
         }
     }
@@ -74,6 +76,11 @@ class MovieDetailsViewModel(
                     details = request.details,
                     credits = request.credits,
                     accountStates = request.accountStates,
+                    ratingBreakdown = request.details?.let { details ->
+                        // the same votes always give the same chart, so keep the one already simulated
+                        if (it.details?.id == details.id) it.ratingBreakdown
+                        else RatingBreakdownSimulator.get(details.voteAverage, details.voteCount)
+                    }.orEmpty(),
                     isLoading = false,
                     error = if (loggedOut) null else failure?.toUiError(),
                 )
@@ -124,6 +131,11 @@ class MovieDetailsViewModel(
             }
             next.finish()
         }
+    }
+
+    private fun openReviews() {
+        val details = _state.value.details ?: return
+        send(MovieDetailsEvent.NavigateToReviews(details.id, details.voteAverage, details.voteCount))
     }
 
     private fun openPerson(personId: Int) {
