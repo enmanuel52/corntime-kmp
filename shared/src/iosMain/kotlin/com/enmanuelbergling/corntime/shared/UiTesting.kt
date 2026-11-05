@@ -5,6 +5,10 @@ import com.enmanuelbergling.corntime.core.domain.datasource.preferences.Settings
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.ActorRemoteDataSource
+import com.enmanuelbergling.corntime.core.domain.sync.MovieSyncScheduler
+import com.enmanuelbergling.corntime.core.domain.sync.TvShowSyncScheduler
+import com.enmanuelbergling.corntime.core.testing.sync.FakeMovieSyncScheduler
+import com.enmanuelbergling.corntime.core.testing.sync.FakeTvShowSyncScheduler
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.AuthRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.MovieRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.TvRemoteDataSource
@@ -75,6 +79,9 @@ object UiTesting {
         single<UserRemoteDataSource> { user }
         single<AuthRemoteDataSource> { auth }
         single<ActorRemoteDataSource> { actors }
+        // no disk queue or background task in UI tests
+        single<MovieSyncScheduler> { FakeMovieSyncScheduler() }
+        single<TvShowSyncScheduler> { FakeTvShowSyncScheduler() }
         single<OnboardingPreferenceDataSource> { FakeOnboardingPreferenceDataSource(initiallyOnboarding = showOnboarding) }
         single<TvRemoteDataSource> { FakeTvRemoteDataSource() }
         single<UserPreferenceDataSource> { FakeUserPreferenceDataSource() }

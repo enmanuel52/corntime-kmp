@@ -49,3 +49,12 @@ extension DarkTheme {
         }
     }
 }
+
+extension ListFieldError {
+    var message: String {
+        switch self {
+        case .nameRequired: return String(localized: "The list needs a name")
+        case .descriptionRequired: return String(localized: "The list needs a description")
+        }
+    }
+}

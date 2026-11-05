@@ -16,9 +16,13 @@ import com.enmanuelbergling.corntime.core.designsystem.core.LocalAnimatedContent
 import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorDetailsKey
 import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.actorEntries
 import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.authEntries
+import com.enmanuelbergling.corntime.feature.favorites.presentation.navigation.FavoriteMoviesKey
+import com.enmanuelbergling.corntime.feature.favorites.presentation.navigation.favoriteEntries
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.moviesEntries
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.settingsEntries
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.watchlistEntries
+import com.enmanuelbergling.corntime.shortcut.ListShortcutManager
 
 /**
  * Single Navigation 3 host. Each entry gets its own ViewModelStore, so screen ViewModels (and their
@@ -30,6 +34,7 @@ fun CornTimeNavHost(
     state: CornTimeAppState,
     onOpenDrawer: () -> Unit,
     onLoggedOut: () -> Unit,
+    shortcuts: ListShortcutManager,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -47,6 +52,19 @@ fun CornTimeNavHost(
                 onBack = state::back,
                 onActor = { id, name, imagePath -> state.navigate(ActorDetailsKey(id, imagePath, name)) },
                 onOpenDrawer = onOpenDrawer,
+                // favorites belong to the account
+                onFavorites = if (state.isLoggedIn) ({ state.navigate(FavoriteMoviesKey) }) else null,
+            )
+            favoriteEntries(
+                onMovieDetails = { state.navigate(MovieDetailsKey(it)) },
+                onBack = state::back,
+            )
+            watchlistEntries(
+                onNavigate = state::navigate,
+                onBack = state::back,
+                onMovieDetails = { state.navigate(MovieDetailsKey(it)) },
+                shortcuts = shortcuts,
+                onListDeleted = shortcuts::remove,
             )
             actorEntries(
                 onNavigate = state::navigate,

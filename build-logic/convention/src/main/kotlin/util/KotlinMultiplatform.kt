@@ -66,5 +66,7 @@ internal fun Project.configureKotlinMultiplatform() {
 
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
+        // Robolectric Compose screen tests are memory hungry once a module has several of them
+        maxHeapSize = "2g"
     }
 }

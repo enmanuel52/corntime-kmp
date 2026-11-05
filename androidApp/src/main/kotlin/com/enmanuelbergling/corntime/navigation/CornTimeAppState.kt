@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.LoginKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.ListDetailsKey
 
 @Composable
 fun rememberCornTimeAppState(isOnline: Boolean = true, isLoggedIn: Boolean = false): CornTimeAppState {
@@ -52,6 +53,13 @@ class CornTimeAppState(
     }
 
     fun navigateToLogin() = navigate(LoginKey)
+
+    /** Opens a list from a launcher shortcut, with the movies home below it. */
+    fun openList(listId: Int, listName: String) {
+        backStack.clear()
+        backStack.add(MoviesHomeKey)
+        backStack.add(ListDetailsKey(listId, listName))
+    }
 
     /** After a successful login the app starts over from the movies home, now with the account. */
     fun onLoginSucceeded() {

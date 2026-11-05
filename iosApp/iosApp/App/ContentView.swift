@@ -2,15 +2,19 @@ import Shared
 import SwiftUI
 
 enum AppTab {
-    case movies, actors, search
+    case movies, actors, lists, search
 }
 
 struct ContentView: View {
+    /// Lists belong to the account, so that tab is only there while logged in.
+    let isLoggedIn: Bool
+
     @State private var query = ""
     @State private var selectedTab = AppTab.movies
 
     @State private var navigation = [Route]()
     @State private var actorsNavigation = [Route]()
+    @State private var listsNavigation = [Route]()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -19,7 +23,9 @@ struct ContentView: View {
                     MoviesScreen(
                         navToMovieSection: { navigation.append(.section($0)) },
                         navToMovieDetails: { navigation.append(.movieDetails($0)) },
-                        navToSettings: { navigation.append(.settings) }
+                        navToSettings: { navigation.append(.settings) },
+                        isLoggedIn: isLoggedIn,
+                        navToFavorites: { navigation.append(.favorites) }
                     )
                     .navigationDestination(for: Route.self) { route in
                         destination(route) { navigation.append($0) }
@@ -38,6 +44,21 @@ struct ContentView: View {
                 .toolbar(actorsNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
             }
 
+            if isLoggedIn {
+                Tab("Lists", systemImage: "bookmark", value: .lists) {
+                    NavigationStack(path: $listsNavigation) {
+                        WatchlistScreen(
+                            navToMovieDetails: { listsNavigation.append(.movieDetails($0)) },
+                            navToLists: { listsNavigation.append(.createdLists) }
+                        )
+                        .navigationDestination(for: Route.self) { route in
+                            destination(route) { listsNavigation.append($0) }
+                        }
+                    }
+                    .toolbar(listsNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
+                }
+            }
+
             Tab(value: .search, role: .search) {
                 NavigationStack(path: $navigation) {
                     SearchScreen(query: query) { navigation.append(.movieDetails($0)) }
@@ -49,6 +70,11 @@ struct ContentView: View {
             }
         }
         .overlay(alignment: .topLeading) { UiTestProbe() }
+        .onChange(of: isLoggedIn) { _, loggedIn in
+            // logging out while on a tab that needs the account would leave nothing selected
+            if !loggedIn && selectedTab == .lists { selectedTab = .movies }
+            if !loggedIn { listsNavigation = [] }
+        }
     }
 
     @ViewBuilder
@@ -60,6 +86,12 @@ struct ContentView: View {
             ActorDetailsScreen(actorId: actorId, name: name) { navigate(.movieDetails($0)) }
         case .section(let section):
             SectionScreen(section: section) { navigate(.movieDetails($0)) }
+        case .favorites:
+            FavoriteMoviesScreen { navigate(.movieDetails($0)) }
+        case .createdLists:
+            CreatedListsScreen { navigate(.listDetails($0, name: $1)) }
+        case .listDetails(let listId, let name):
+            ListDetailsScreen(listId: listId, name: name) { navigate(.movieDetails($0)) }
         case .settings:
             SettingsScreen { navigate(.login) }
         case .login:

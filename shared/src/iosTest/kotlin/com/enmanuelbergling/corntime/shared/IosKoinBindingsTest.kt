@@ -5,6 +5,8 @@ import assertk.assertions.endsWith
 import assertk.assertions.isNotNull
 import com.enmanuelbergling.corntime.core.datastore.DataStorePathProvider
 import com.enmanuelbergling.corntime.core.datastore.secure.SecureStorage
+import com.enmanuelbergling.corntime.core.domain.sync.MovieSyncScheduler
+import com.enmanuelbergling.corntime.core.domain.sync.TvShowSyncScheduler
 import org.koin.core.context.stopKoin
 import org.koin.mp.KoinPlatform
 import kotlin.test.AfterTest
@@ -22,6 +24,8 @@ class IosKoinBindingsTest {
         val koin = KoinPlatform.getKoin()
 
         assertThat(koin.get<SecureStorage>()).isNotNull()
+        assertThat(koin.get<MovieSyncScheduler>()).isNotNull()
+        assertThat(koin.get<TvShowSyncScheduler>()).isNotNull()
         assertThat(koin.get<DataStorePathProvider>().absolutePath("x.preferences_pb")).endsWith("/x.preferences_pb")
     }
 }

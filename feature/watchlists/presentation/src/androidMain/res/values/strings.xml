@@ -1,0 +1,18 @@
+<resources>
+    <string name="movie_removed_from_watchlist">Movie removed from watchlist</string>
+    <string name="movie_removed_from_list">Movie removed from the list</string>
+    <string name="movie_added_to_favorites">Movie added to favorites</string>
+    <string name="watchlist_is_empty">Your watchlist is empty</string>
+    <string name="list_is_empty">This list has no movies</string>
+    <string name="no_lists_yet">You have not created any list yet</string>
+    <string name="my_lists">My lists</string>
+    <string name="new_list">New List</string>
+    <string name="create">Create</string>
+    <string name="list_name_hint">List name*</string>
+    <string name="list_description_hint">List description*</string>
+    <string name="list_name_required">The list needs a name</string>
+    <string name="list_description_required">The list needs a description</string>
+    <string name="delete_list_title">Delete this list?</string>
+    <string name="shortcut_icon">shortcut icon</string>
+    <string name="lists_icon">lists icon</string>
+</resources>

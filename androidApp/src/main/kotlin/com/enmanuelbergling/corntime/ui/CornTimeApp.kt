@@ -46,6 +46,7 @@ import com.enmanuelbergling.corntime.navigation.CornTimeAppState
 import com.enmanuelbergling.corntime.navigation.CornTimeNavHost
 import com.enmanuelbergling.corntime.navigation.TopDestination
 import com.enmanuelbergling.corntime.navigation.rememberCornTimeAppState
+import com.enmanuelbergling.corntime.shortcut.ListShortcutManager
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -87,6 +88,7 @@ private const val SPEED = 1.1f
 @Composable
 fun CornTimeApp(
     state: CornTimeAppState = rememberCornTimeAppState(),
+    shortcuts: ListShortcutManager,
     onLoggedOut: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -204,6 +206,7 @@ fun CornTimeApp(
                                 }
                             },
                             onLoggedOut = onLoggedOut,
+                            shortcuts = shortcuts,
                         )
 
                         if (draggableState.currentValue == NewDrawerState.Open) {

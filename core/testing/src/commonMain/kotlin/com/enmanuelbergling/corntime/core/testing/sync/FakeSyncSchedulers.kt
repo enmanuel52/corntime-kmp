@@ -9,8 +9,16 @@ class FakeMovieSyncScheduler : MovieSyncScheduler {
     val watchlistSyncs = mutableListOf<WatchlistSync>()
     val favoriteDeletions = mutableListOf<List<Int>>()
 
+    data class ListSync(val listId: Int, val deleted: List<Int>, val favorites: List<Int>)
+
+    val listSyncs = mutableListOf<ListSync>()
+
     override fun watchlist(deletedMovieIds: List<Int>, favoriteMovieIds: List<Int>) {
         watchlistSyncs += WatchlistSync(deletedMovieIds, favoriteMovieIds)
+    }
+
+    override fun deleteFromList(listId: Int, deletedMovieIds: List<Int>, favoriteMovieIds: List<Int>) {
+        listSyncs += ListSync(listId, deletedMovieIds, favoriteMovieIds)
     }
 
     override fun deleteFromFavorite(movieIds: List<Int>) {

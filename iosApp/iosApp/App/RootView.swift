@@ -21,7 +21,7 @@ struct RootView: View {
                 // preferences are read in a moment; no flash of the default theme
                 Color(.systemBackground)
             } else {
-                ContentView()
+                ContentView(isLoggedIn: state.isLoggedIn)
                     .fullScreenCover(isPresented: showOnboarding) {
                         OnboardingScreen {
                             model.viewModel.onAction(action: AppActionOnFinishOnboarding.shared)

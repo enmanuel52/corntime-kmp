@@ -7,9 +7,13 @@ import com.enmanuelbergling.corntime.feature.actor.domain.di.ActorDomainModule
 import com.enmanuelbergling.corntime.feature.actor.presentation.di.ActorPresentationModule
 import com.enmanuelbergling.corntime.feature.auth.domain.di.AuthDomainModule
 import com.enmanuelbergling.corntime.feature.auth.presentation.di.AuthPresentationModule
+import com.enmanuelbergling.corntime.core.sync.di.CoreSyncModule
+import com.enmanuelbergling.corntime.feature.favorites.presentation.di.FavoritesPresentationModule
 import com.enmanuelbergling.corntime.feature.movies.domain.di.MoviesDomainModule
 import com.enmanuelbergling.corntime.feature.movies.presentation.di.MoviesPresentationModule
 import com.enmanuelbergling.corntime.feature.settings.presentation.di.SettingsPresentationModule
+import com.enmanuelbergling.corntime.feature.watchlists.domain.di.WatchlistsDomainModule
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.di.WatchlistsPresentationModule
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.KoinApplication
 import org.koin.core.annotation.Module
@@ -23,6 +27,7 @@ import org.koin.plugin.module.dsl.startKoin
         CoreDomainModule::class,
         CoreDataModule::class,
         CoreDatastoreModule::class,
+        CoreSyncModule::class,
         ActorDomainModule::class,
         ActorPresentationModule::class,
         AuthDomainModule::class,
@@ -30,6 +35,9 @@ import org.koin.plugin.module.dsl.startKoin
         SettingsPresentationModule::class,
         MoviesDomainModule::class,
         MoviesPresentationModule::class,
+        FavoritesPresentationModule::class,
+        WatchlistsDomainModule::class,
+        WatchlistsPresentationModule::class,
         SharedModule::class,
     ],
 )

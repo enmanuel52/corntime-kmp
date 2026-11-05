@@ -9,6 +9,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.core.domain)
+            api(libs.androidx.lifecycle.viewmodel)
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }
