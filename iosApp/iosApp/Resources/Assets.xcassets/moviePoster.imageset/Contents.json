@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "pop_corn_and_cinema_poster.jpg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
