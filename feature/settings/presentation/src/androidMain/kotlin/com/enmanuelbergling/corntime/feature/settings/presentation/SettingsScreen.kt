@@ -345,7 +345,7 @@ private fun SettingOptions(
                         }
                     } else {
                         Text(
-                            text = "Hello " + userState.username,
+                            text = stringResource(R.string.hello_user, userState.username),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -355,7 +355,7 @@ private fun SettingOptions(
             item {
                 SettingItemUi(
                     item = SettingItem.DarkMode,
-                    textValue = darkTheme.label,
+                    textValue = stringResource(darkTheme.labelResource),
                     modifier = Modifier.fillMaxWidth().testTag(SettingsTags.DARK_THEME),
                 ) { onDarkThemeClick() }
             }
@@ -363,7 +363,7 @@ private fun SettingOptions(
             item {
                 SettingItemUi(
                     item = SettingItem.DynamicColor,
-                    textValue = if (dynamicColor) "On" else "Off",
+                    textValue = stringResource(if (dynamicColor) R.string.on else R.string.off),
                     modifier = Modifier.fillMaxWidth().testTag(SettingsTags.DYNAMIC_COLOR),
                 ) { onDynamicColorClick() }
             }
@@ -384,7 +384,7 @@ private fun DynamicColorMenu(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimen.verySmall)
         ) {
             SelectionText(
-                text = "On",
+                text = stringResource(R.string.on),
                 selected = active,
                 modifier = Modifier.height(TextFieldDefaults.MinHeight)
             ) {
@@ -392,7 +392,7 @@ private fun DynamicColorMenu(
                 onDismiss()
             }
             SelectionText(
-                text = "Off",
+                text = stringResource(R.string.off),
                 selected = !active,
                 modifier = Modifier.height(TextFieldDefaults.MinHeight)
             ) {
@@ -417,7 +417,7 @@ private fun DarkThemeMenu(
         ) {
             DarkTheme.entries.forEach { theme ->
                 SelectionText(
-                    text = theme.label,
+                    text = stringResource(theme.labelResource),
                     selected = theme == darkTheme,
                     modifier = Modifier.height(TextFieldDefaults.MinHeight)
                 ) {
@@ -578,3 +578,10 @@ internal data class SettingItem(
         val DynamicColor = SettingItem(R.drawable.paint_brush, R.string.dynamic_color)
     }
 }
+
+private val DarkTheme.labelResource: Int
+    get() = when (this) {
+        DarkTheme.No -> R.string.theme_light
+        DarkTheme.Yes -> R.string.theme_dark
+        DarkTheme.System -> R.string.theme_system
+    }

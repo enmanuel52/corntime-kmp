@@ -40,4 +40,5 @@
     <string name="recent_searches">Búsquedas recientes</string>
     <string name="delete_suggestion_icon">eliminar búsqueda reciente</string>
     <string name="your_rating_icon">tu valoración</string>
+    <string name="overview">Resumen</string>
 </resources>

@@ -73,8 +73,18 @@
     <string name="leave_a_comment">Deje un comentario…</string>
     <string name="leave_a_review">Deje una valoración</string>
     <string name="leave_a_review_subtitle">Qué piensas de la película?</string>
-    <string name="rate_and_reviews"><![CDATA[Ratings & Reviews]]></string>
+    <string name="rate_and_reviews"><![CDATA[Valoraciones y reseñas]]></string>
     <string name="movie_rated">Ha valorado esta película</string>
     <string name="search">Buscar</string>
     <string name="filter">Filtrar</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_system">Sistema</string>
+    <string name="on">Activado</string>
+    <string name="off">Desactivado</string>
+    <string name="hello_user">Hola %1$s</string>
+    <string name="reviews">Reseñas</string>
+    <string name="rate">Valorar</string>
+    <string name="rate_this_movie">Valorar esta película</string>
+    <string name="submit">Enviar</string>
 </resources>
