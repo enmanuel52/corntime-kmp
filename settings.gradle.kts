@@ -43,6 +43,8 @@ include(":core:datastore")
 include(":core:presentation")
 include(":core:design-system")
 
+include(":feature:actor:domain")
+include(":feature:actor:presentation")
 include(":feature:auth:domain")
 include(":feature:auth:presentation")
 include(":feature:settings:presentation")
