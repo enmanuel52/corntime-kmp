@@ -37,6 +37,10 @@ class MovieDetailsRobot(private val rule: ComposeContentTestRule) {
 
     fun clickWatchlist() = apply { rule.onNodeWithTag(MovieDetailsTags.WATCHLIST).performClick() }
 
+    fun assertRatingSummary(visible: Boolean) = apply { assertTag(MovieDetailsTags.RATING, visible) }
+
+    fun clickRatingSummary() = apply { rule.onNodeWithTag(MovieDetailsTags.RATING).performClick() }
+
     fun clickBack() = apply { rule.onNodeWithContentDescription("back icon").performClick() }
 
     /** Person cards (cast first, then crew) are clickable on their poster, not on the name. */

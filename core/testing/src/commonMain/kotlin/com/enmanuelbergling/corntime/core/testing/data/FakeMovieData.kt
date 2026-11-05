@@ -6,6 +6,8 @@ import com.enmanuelbergling.corntime.core.domain.model.movie.Genre
 import com.enmanuelbergling.corntime.core.domain.model.movie.Movie
 import com.enmanuelbergling.corntime.core.domain.model.movie.MovieCredits
 import com.enmanuelbergling.corntime.core.domain.model.movie.MovieDetails
+import com.enmanuelbergling.corntime.core.domain.model.movie.Review
+import com.enmanuelbergling.corntime.core.domain.model.movie.ReviewAuthorDetails
 
 object FakeMovieData {
 
@@ -113,5 +115,36 @@ object FakeMovieData {
         id = 0,
         cast = (1..4).map { DEFAULT_CAST.copy(id = it) },
         crew = (1..4).map { DEFAULT_CREW.copy(id = it) },
+    )
+
+    /** Three reviews with distinct ids; the first two carry a rating, the last does not. */
+    val REVIEWS = listOf(
+        Review(
+            id = "review-1",
+            author = "Tim",
+            content = "A masterpiece. The pacing, the score and the performances all work together.",
+            createdAt = "2024-01-05T10:00:00.000Z",
+            url = "https://www.themoviedb.org/review/review-1",
+            rating = 4.5f,
+            authorDetails = ReviewAuthorDetails(name = "Tim", username = "timcorn", avatarPath = null),
+        ),
+        Review(
+            id = "review-2",
+            author = "Ana",
+            content = "Good, but a little long.",
+            createdAt = "2023-06-20T18:30:00.000Z",
+            url = "https://www.themoviedb.org/review/review-2",
+            rating = 3f,
+            authorDetails = ReviewAuthorDetails(name = "Ana", username = "ana", avatarPath = "/ana.jpg"),
+        ),
+        Review(
+            id = "review-3",
+            author = "Leo",
+            content = "Not for me.",
+            createdAt = "2022-11-11T08:15:00.000Z",
+            url = "https://www.themoviedb.org/review/review-3",
+            rating = null,
+            authorDetails = ReviewAuthorDetails(name = "Leo", username = "leo", avatarPath = null),
+        ),
     )
 }

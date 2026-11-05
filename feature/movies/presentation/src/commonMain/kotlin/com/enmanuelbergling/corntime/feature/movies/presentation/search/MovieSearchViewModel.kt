@@ -2,6 +2,7 @@ package com.enmanuelbergling.corntime.feature.movies.presentation.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SearchSuggestionPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.MovieRemoteDataSource
 import com.enmanuelbergling.corntime.core.presentation.paging.Paginator
 import kotlinx.coroutines.FlowPreview
@@ -26,6 +27,7 @@ internal val SEARCH_DEBOUNCE = 500.milliseconds
 @KoinViewModel
 class MovieSearchViewModel(
     private val dataSource: MovieRemoteDataSource,
+    private val suggestionsDataSource: SearchSuggestionPreferenceDataSource,
 ) : ViewModel() {
 
     /**
@@ -48,6 +50,9 @@ class MovieSearchViewModel(
         paginator.state
             .onEach { paging -> _state.update { it.copy(paging = paging) } }
             .launchIn(viewModelScope)
+        suggestionsDataSource.getSuggestions()
+            .onEach { suggestions -> _state.update { it.copy(suggestions = suggestions) } }
+            .launchIn(viewModelScope)
         observeQuery()
     }
 
@@ -58,9 +63,22 @@ class MovieSearchViewModel(
             MovieSearchAction.OnLoadNextPage -> if (activeQuery.isNotBlank()) {
                 viewModelScope.launch { paginator.loadNext() }
             }
-            is MovieSearchAction.OnMovieClick ->
-                viewModelScope.launch { _events.send(MovieSearchEvent.NavigateToDetails(action.movieId)) }
+            MovieSearchAction.OnSearchSubmit -> rememberSuggestion(_state.value.query)
+            is MovieSearchAction.OnSuggestionClick -> setQuery(action.query)
+            is MovieSearchAction.OnDeleteSuggestion ->
+                viewModelScope.launch { suggestionsDataSource.deleteSuggestion(action.query) }
+            MovieSearchAction.OnClearSuggestions ->
+                viewModelScope.launch { suggestionsDataSource.clearSuggestions() }
+            is MovieSearchAction.OnMovieClick -> viewModelScope.launch {
+                // a search that led to a movie is worth coming back to
+                suggestionsDataSource.addSuggestion(activeQuery)
+                _events.send(MovieSearchEvent.NavigateToDetails(action.movieId))
+            }
         }
+    }
+
+    private fun rememberSuggestion(query: String) {
+        viewModelScope.launch { suggestionsDataSource.addSuggestion(query) }
     }
 
     private fun setQuery(query: String) {

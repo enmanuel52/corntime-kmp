@@ -109,4 +109,65 @@ class MovieSearchContentTest {
 
         assertThat(actions).contains(MovieSearchAction.OnMovieClick(movies[1].id))
     }
+
+    private fun showSuggestions(query: String = "", suggestions: List<String> = listOf("dune", "alien")) {
+        rule.setThemedContent {
+            MovieSearchContent(
+                state = MovieSearchState(query = query, suggestions = suggestions),
+                onAction = { actions += it },
+            )
+        }
+        rule.mainClock.advanceTimeBy(1_000)
+    }
+
+    @Test
+    fun givenBlankQueryAndSuggestions_whenShown_thenRecentSearchesAreListed() {
+        showSuggestions()
+
+        tag(MovieSearchTags.SUGGESTIONS).assertIsDisplayed()
+        rule.onNodeWithText("Recent searches").assertIsDisplayed()
+        rule.onNodeWithText("dune").assertIsDisplayed()
+        rule.onNodeWithText("alien").assertIsDisplayed()
+    }
+
+    @Test
+    fun givenBlankQueryWithoutSuggestions_whenShown_thenNoSuggestionList() {
+        showSuggestions(suggestions = emptyList())
+
+        tag(MovieSearchTags.SUGGESTIONS).assertDoesNotExist()
+    }
+
+    @Test
+    fun givenTypedQuery_whenShown_thenSuggestionsAreHiddenInFavorOfResults() {
+        showSuggestions(query = "du")
+
+        tag(MovieSearchTags.SUGGESTIONS).assertDoesNotExist()
+    }
+
+    @Test
+    fun givenSuggestion_whenTapped_thenDispatchesSuggestionClick() {
+        showSuggestions()
+
+        rule.onNodeWithText("alien").performClick()
+
+        assertThat(actions).containsExactly(MovieSearchAction.OnSuggestionClick("alien"))
+    }
+
+    @Test
+    fun givenSuggestion_whenDeleteTapped_thenDispatchesDelete() {
+        showSuggestions()
+
+        tag("${MovieSearchTags.DELETE_SUGGESTION}dune").performClick()
+
+        assertThat(actions).containsExactly(MovieSearchAction.OnDeleteSuggestion("dune"))
+    }
+
+    @Test
+    fun givenSuggestions_whenClearTapped_thenDispatchesClear() {
+        showSuggestions()
+
+        tag(MovieSearchTags.CLEAR_SUGGESTIONS).performClick()
+
+        assertThat(actions).containsExactly(MovieSearchAction.OnClearSuggestions)
+    }
 }

@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
@@ -154,6 +155,12 @@ fun MoviesScreen(
         onSearchAction(MovieSearchAction.OnQueryChange(textFieldState.text.toString()))
     }
 
+    // the text field is the source of truth for what is typed, so a picked suggestion has to land there too
+    val searchAction: (MovieSearchAction) -> Unit = { action ->
+        if (action is MovieSearchAction.OnSuggestionClick) textFieldState.setTextAndPlaceCursorAtEnd(action.query)
+        onSearchAction(action)
+    }
+
     val errorMessage = state.error?.messageResource
 
     if (errorMessage != null && !state.isFeedEmpty) {
@@ -191,11 +198,12 @@ fun MoviesScreen(
                         ExpandedSearchBarInputField(
                             textFieldState = textFieldState,
                             searchBarState = searchBarState,
+                            onSearch = { searchAction(MovieSearchAction.OnSearchSubmit) },
                         )
                     },
                     colors = SearchBarDefaults.colors(dividerColor = Color.Transparent),
                 ) {
-                    MovieSearchContent(state = searchState, onAction = onSearchAction)
+                    MovieSearchContent(state = searchState, onAction = searchAction)
                 }
 
                 MoviesGrid(
@@ -293,6 +301,7 @@ private fun SearchBarInputField(
 private fun ExpandedSearchBarInputField(
     textFieldState: TextFieldState,
     searchBarState: SearchBarState,
+    onSearch: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
@@ -300,7 +309,10 @@ private fun ExpandedSearchBarInputField(
     SearchBarDefaults.InputField(
         textFieldState = textFieldState,
         searchBarState = searchBarState,
-        onSearch = { keyboardController?.hide() },
+        onSearch = {
+            onSearch()
+            keyboardController?.hide()
+        },
         leadingIcon = {
             IconButton(onClick = {
                 textFieldState.clearText()

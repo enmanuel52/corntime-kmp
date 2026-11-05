@@ -19,7 +19,10 @@ data class Review(
      * Largest elapsed unit since [createdAt] (e.g. 2 years, 1 week). Each platform formats it
      * with its own localized strings. Unparseable dates are treated as [ElapsedTime.JustNow].
      */
-    fun elapsedSincePosted(now: Instant = Clock.System.now()): ElapsedTime {
+    fun elapsedSincePosted(): ElapsedTime = elapsedSincePosted(Clock.System.now())
+
+    /** Overloaded instead of defaulted, because default arguments do not reach Swift. */
+    fun elapsedSincePosted(now: Instant): ElapsedTime {
         val posted = runCatching { Instant.parse(createdAt) }.getOrNull() ?: return ElapsedTime.JustNow
         if (posted >= now) return ElapsedTime.JustNow
         val period: DateTimePeriod = posted.periodUntil(now, TimeZone.UTC)

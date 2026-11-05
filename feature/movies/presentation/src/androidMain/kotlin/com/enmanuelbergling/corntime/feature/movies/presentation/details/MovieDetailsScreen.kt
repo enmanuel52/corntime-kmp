@@ -68,6 +68,7 @@ import com.enmanuelbergling.corntime.core.designsystem.theme.Heart
 import com.enmanuelbergling.corntime.core.presentation.error.messageResource
 import com.enmanuelbergling.corntime.core.presentation.event.ObserveAsEvents
 import com.enmanuelbergling.corntime.core.presentation.image.ImageUrls
+import com.enmanuelbergling.corntime.feature.movies.presentation.components.RatingSummaryHeader
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -77,12 +78,14 @@ object MovieDetailsTags {
     const val FAVORITE_LOADING = "movie_details_favorite_loading"
     const val WATCHLIST_LOADING = "movie_details_watchlist_loading"
     const val CONTENT = "movie_details_content"
+    const val RATING = "movie_details_rating"
 }
 
 @Composable
 fun MovieDetailsRoot(
     movieId: Int,
     onActor: (actorId: Int, name: String, imagePath: String?) -> Unit,
+    onReviews: (movieId: Int, averageRating: Double, totalReviews: Int) -> Unit,
     onBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<MovieDetailsViewModel> { parametersOf(movieId) }
@@ -92,6 +95,8 @@ fun MovieDetailsRoot(
         when (event) {
             MovieDetailsEvent.NavigateBack -> onBack()
             is MovieDetailsEvent.NavigateToActor -> onActor(event.actorId, event.name, event.profilePath)
+            is MovieDetailsEvent.NavigateToReviews ->
+                onReviews(event.movieId, event.averageRating, event.totalReviews)
         }
     }
 
@@ -225,6 +230,19 @@ fun MovieDetailsScreen(
                 )
 
                 overview(details.overview)
+
+                item {
+                    RatingSummaryHeader(
+                        averageRating = details.voteAverage.toFloat(),
+                        totalReviews = details.voteCount,
+                        breakdown = state.ratingBreakdown,
+                        modifier = Modifier
+                            .testTag(MovieDetailsTags.RATING)
+                            .fillMaxWidth()
+                            .clickable { onAction(MovieDetailsAction.OnReviewsClick) }
+                            .padding(horizontal = MaterialTheme.dimen.medium),
+                    )
+                }
 
                 persons(
                     title = DesignR.string.cast,

@@ -4,6 +4,7 @@ import com.enmanuelbergling.corntime.core.domain.model.movie.MovieAccountStates
 import com.enmanuelbergling.corntime.core.domain.model.movie.MovieCredits
 import com.enmanuelbergling.corntime.core.domain.model.movie.MovieDetails
 import com.enmanuelbergling.corntime.core.presentation.error.UiError
+import com.enmanuelbergling.corntime.feature.movies.domain.reviews.RatingBucket
 
 /** A cast or crew member as the details screens show them. */
 data class PersonUi(
@@ -22,6 +23,8 @@ data class MovieDetailsState(
     val isFavoriteLoading: Boolean = false,
     val isLoading: Boolean = false,
     val error: UiError? = null,
+    /** Share of voters per star, 5 down to 1; empty without votes. */
+    val ratingBreakdown: List<RatingBucket> = emptyList(),
 ) {
     val canManageAccount: Boolean get() = accountStates != null
     val isInWatchlist: Boolean get() = accountStates?.watchlist == true
@@ -40,11 +43,16 @@ sealed interface MovieDetailsAction {
     data object OnDismissError : MovieDetailsAction
     data object OnWatchlistClick : MovieDetailsAction
     data object OnFavoriteClick : MovieDetailsAction
+    data object OnReviewsClick : MovieDetailsAction
     data class OnPersonClick(val personId: Int) : MovieDetailsAction
 }
 
 sealed interface MovieDetailsEvent {
     data object NavigateBack : MovieDetailsEvent
+
+    /** [averageRating] is on the 0..5 star scale. */
+    data class NavigateToReviews(val movieId: Int, val averageRating: Double, val totalReviews: Int) : MovieDetailsEvent
+
     /** Name and photo are what the actor screen shows right away, before its own request finishes. */
     data class NavigateToActor(val actorId: Int, val name: String, val profilePath: String?) : MovieDetailsEvent
 }

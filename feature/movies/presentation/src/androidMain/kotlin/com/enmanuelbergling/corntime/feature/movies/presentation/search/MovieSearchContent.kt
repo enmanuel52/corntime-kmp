@@ -25,11 +25,13 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.VerticalAlignTop
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -66,6 +68,10 @@ object MovieSearchTags {
     const val LOADING = "movie_search_loading"
     const val RETRY = "movie_search_retry"
     const val NO_RESULTS = "movie_search_no_results"
+    const val SUGGESTIONS = "movie_search_suggestions"
+    const val SUGGESTION = "movie_search_suggestion_"
+    const val DELETE_SUGGESTION = "movie_search_delete_suggestion_"
+    const val CLEAR_SUGGESTIONS = "movie_search_clear_suggestions"
 }
 
 /** Results of the movie search, shown inside the expanded search bar. */
@@ -83,6 +89,11 @@ fun MovieSearchContent(
 
     lazyListState.OnLoadMore(itemCount = paging.items.size, enabled = error == null) {
         onAction(MovieSearchAction.OnLoadNextPage)
+    }
+
+    if (state.showSuggestions) {
+        SuggestionsList(state.suggestions, onAction, modifier)
+        return
     }
 
     Box(modifier) {
@@ -160,6 +171,64 @@ fun MovieSearchContent(
                     imageVector = Icons.Rounded.VerticalAlignTop,
                     contentDescription = stringResource(DesignR.string.to_start_icon),
                 )
+            }
+        }
+    }
+}
+
+/** Recent searches, shown while nothing is typed. */
+@Composable
+private fun SuggestionsList(
+    suggestions: List<String>,
+    onAction: (MovieSearchAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(MovieSearchTags.SUGGESTIONS),
+    ) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = MaterialTheme.dimen.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.recent_searches),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                    onClick = { onAction(MovieSearchAction.OnClearSuggestions) },
+                    modifier = Modifier.testTag(MovieSearchTags.CLEAR_SUGGESTIONS),
+                ) { Text(stringResource(DesignR.string.clear)) }
+            }
+        }
+
+        items(suggestions, key = { it }) { query ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("${MovieSearchTags.SUGGESTION}$query")
+                    .clickable { onAction(MovieSearchAction.OnSuggestionClick(query)) }
+                    .padding(horizontal = MaterialTheme.dimen.medium, vertical = MaterialTheme.dimen.small),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimen.small),
+            ) {
+                Icon(imageVector = Icons.Rounded.History, contentDescription = null)
+                Text(text = query, modifier = Modifier.weight(1f), maxLines = 1)
+                IconButton(
+                    onClick = { onAction(MovieSearchAction.OnDeleteSuggestion(query)) },
+                    modifier = Modifier.testTag("${MovieSearchTags.DELETE_SUGGESTION}$query"),
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.delete_suggestion_icon),
+                    )
+                }
             }
         }
     }

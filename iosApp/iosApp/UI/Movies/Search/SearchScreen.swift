@@ -7,7 +7,9 @@ enum SearchScopeKind: Hashable {
 }
 
 struct SearchScreen: View {
-    var query: String
+    @Binding var query: String
+    /// Bumped when the keyboard's search key is pressed.
+    var submissions: Int
     var scope: SearchScopeKind
     let navToMovieDetails: (Int32) -> Void
     let navToTvShowDetails: (Int32) -> Void
@@ -15,7 +17,11 @@ struct SearchScreen: View {
     var body: some View {
         switch scope {
         case .movies:
-            MovieSearchContent(query: query, navToMovieDetails: navToMovieDetails)
+            MovieSearchContent(
+                query: $query,
+                submissions: submissions,
+                navToMovieDetails: navToMovieDetails
+            )
         case .tvShows:
             TvShowSearchContent(query: query, navToTvShowDetails: navToTvShowDetails)
         }
@@ -24,7 +30,8 @@ struct SearchScreen: View {
 
 private struct MovieSearchContent: View {
     @State private var model = ScreenModels.movieSearch()
-    var query: String
+    @Binding var query: String
+    var submissions: Int
     let navToMovieDetails: (Int32) -> Void
 
     private func send(_ action: MovieSearchAction) {
@@ -36,7 +43,18 @@ private struct MovieSearchContent: View {
         let paging = state.paging
 
         VStack {
-            if paging.isLoadingFirstPage {
+            if state.showSuggestions {
+                SuggestionsList(
+                    suggestions: state.suggestions,
+                    onPick: { picked in
+                        // the search field owns what is typed, so the pick has to land there too
+                        query = picked
+                        send(MovieSearchActionOnSuggestionClick(query: picked))
+                    },
+                    onDelete: { send(MovieSearchActionOnDeleteSuggestion(query: $0)) },
+                    onClear: { send(MovieSearchActionOnClearSuggestions.shared) }
+                )
+            } else if paging.isLoadingFirstPage {
                 ProgressView().accessibilityIdentifier("search.loading")
             } else if state.showNoResults {
                 Text("No movies to show").accessibilityIdentifier("search.empty")
@@ -86,6 +104,9 @@ private struct MovieSearchContent: View {
         .onChange(of: query) { _, newValue in
             send(MovieSearchActionOnQueryChange(query: newValue))
         }
+        .onChange(of: submissions) { _, _ in
+            send(MovieSearchActionOnSearchSubmit.shared)
+        }
         .onAppear {
             // coming back from the other scope: the typed text is still there, search it again
             if !query.isEmpty { send(MovieSearchActionOnQueryChange(query: query)) }
@@ -97,5 +118,51 @@ private struct MovieSearchContent: View {
                 }
             }
         }
+    }
+}
+
+/// Recent searches, shown while nothing is typed.
+private struct SuggestionsList: View {
+    let suggestions: [String]
+    let onPick: (String) -> Void
+    let onDelete: (String) -> Void
+    let onClear: () -> Void
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(suggestions, id: \.self) { suggestion in
+                    HStack {
+                        Button {
+                            onPick(suggestion)
+                        } label: {
+                            Label(suggestion, systemImage: "clock.arrow.circlepath")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("search.suggestion.\(suggestion)")
+
+                        Button {
+                            onDelete(suggestion)
+                        } label: {
+                            Image(systemName: "xmark")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel("Delete recent search")
+                        .accessibilityIdentifier("search.deleteSuggestion.\(suggestion)")
+                    }
+                }
+            } header: {
+                HStack {
+                    Text("Recent searches")
+                    Spacer()
+                    Button("Clear", action: onClear)
+                        .accessibilityIdentifier("search.clearSuggestions")
+                }
+            }
+        }
+        .listStyle(.plain)
+        .accessibilityIdentifier("search.suggestions")
     }
 }

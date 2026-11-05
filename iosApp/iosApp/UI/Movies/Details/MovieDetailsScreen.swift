@@ -4,9 +4,15 @@ import SwiftUI
 struct MovieDetailsScreen: View {
     @State private var model: ScreenModel<MovieDetailsViewModel, MovieDetailsState>
     let navToActorDetails: (Int32, String) -> Void
+    let navToReviews: (Int32, Double, Int32) -> Void
 
-    init(movieId: Int32, navToActorDetails: @escaping (Int32, String) -> Void) {
+    init(
+        movieId: Int32,
+        navToActorDetails: @escaping (Int32, String) -> Void,
+        navToReviews: @escaping (Int32, Double, Int32) -> Void
+    ) {
         self.navToActorDetails = navToActorDetails
+        self.navToReviews = navToReviews
         _model = State(initialValue: ScreenModels.movieDetails(movieId: movieId))
     }
 
@@ -36,6 +42,19 @@ struct MovieDetailsScreen: View {
 
                     Overview(text: details.overview)
                         .padding(.horizontal, AppDimensions.medium)
+
+                    Button {
+                        send(MovieDetailsActionOnReviewsClick.shared)
+                    } label: {
+                        RatingSummary(
+                            averageRating: Float(details.voteAverage),
+                            totalReviews: details.voteCount,
+                            breakdown: state.ratingBreakdown
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, AppDimensions.medium)
+                    .accessibilityIdentifier("details.rating")
                 }
 
                 if state.credits != nil {
@@ -94,6 +113,8 @@ struct MovieDetailsScreen: View {
             for await event in model.viewModel.events {
                 switch onEnum(of: event) {
                 case .navigateToActor(let actor): navToActorDetails(actor.actorId, actor.name)
+                case .navigateToReviews(let reviews):
+                    navToReviews(reviews.movieId, reviews.averageRating, reviews.totalReviews)
                 case .navigateBack: break  // the system back button pops the stack
                 }
             }

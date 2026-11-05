@@ -274,4 +274,45 @@ class MovieDetailsViewModelTest : MainDispatcherTest() {
         }
         assertThat(viewModel.current.cast.isEmpty()).isFalse()
     }
+
+    @Test
+    fun givenDetailsLoaded_whenCreated_thenRatingBreakdownCoversTheVoteCount() = runTest {
+        val state = viewModel().current
+
+        assertThat(state.ratingBreakdown.map { it.stars }).isEqualTo(listOf(5, 4, 3, 2, 1))
+        assertThat(state.ratingBreakdown.sumOf { it.count }).isEqualTo(state.details!!.voteCount)
+    }
+
+    @Test
+    fun givenDetailsFail_whenCreated_thenThereIsNoRatingBreakdown() = runTest {
+        movies.fail(MovieRemoteFunction.GetMovieDetails)
+
+        assertThat(viewModel().current.ratingBreakdown).isEmpty()
+    }
+
+    @Test
+    fun givenDetails_whenOpeningReviews_thenNavigatesWithTheMovieSummary() = runTest {
+        val viewModel = viewModel(movieId = 7)
+        val details = viewModel.current.details!!
+
+        viewModel.events.test {
+            viewModel.onAction(MovieDetailsAction.OnReviewsClick)
+
+            assertThat(awaitItem())
+                .isEqualTo(MovieDetailsEvent.NavigateToReviews(7, details.voteAverage, details.voteCount))
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun givenDetailsNotLoaded_whenOpeningReviews_thenNothingHappens() = runTest {
+        movies.fail(MovieRemoteFunction.GetMovieDetails)
+        val viewModel = viewModel()
+
+        viewModel.events.test {
+            viewModel.onAction(MovieDetailsAction.OnReviewsClick)
+
+            expectNoEvents()
+        }
+    }
 }

@@ -13,6 +13,7 @@ import com.enmanuelbergling.corntime.core.presentation.error.UiError
 import com.enmanuelbergling.corntime.core.testing.data.FakeMovieData
 import com.enmanuelbergling.corntime.feature.movies.presentation.util.PHONE_QUALIFIERS
 import com.enmanuelbergling.corntime.feature.movies.presentation.util.ROBOLECTRIC_SDK
+import com.enmanuelbergling.corntime.feature.movies.domain.reviews.RatingBreakdownSimulator
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,6 +63,26 @@ class MovieDetailsScreenTest {
             .assertContentVisible(true)
             .assertTextVisible("${details.title} (${details.releaseYear})")
             .assertTextVisible(details.formattedGenres, substring = true)
+    }
+
+    @Test
+    fun givenLoadedMovie_whenShown_thenRatingSummaryShowsTheVoteCount() {
+        robot.show(state().copy(ratingBreakdown = RatingBreakdownSimulator.get(details.voteAverage, details.voteCount)))
+            .assertRatingSummary(true)
+            .assertTextVisible("${details.voteCount} review", substring = true)
+    }
+
+    @Test
+    fun givenRatingSummary_whenTapped_thenOpensReviews() {
+        robot.show(state()).clickRatingSummary()
+
+        assertThat(robot.actions).containsExactly(MovieDetailsAction.OnReviewsClick)
+    }
+
+    @Test
+    fun givenLoggedOut_whenShown_thenRatingSummaryIsStillVisibleButOffersNoRating() {
+        robot.show(state(loggedIn = false)).assertRatingSummary(true)
+            .assertTextAbsent("Rate this movie")
     }
 
     @Test
