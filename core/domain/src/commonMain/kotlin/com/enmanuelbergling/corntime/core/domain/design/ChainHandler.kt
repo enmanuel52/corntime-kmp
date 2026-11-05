@@ -1,5 +1,10 @@
 package com.enmanuelbergling.corntime.core.domain.design
 
+import com.enmanuelbergling.corntime.core.domain.error.DataException
+import com.enmanuelbergling.corntime.core.domain.error.Error
+import com.enmanuelbergling.corntime.core.domain.util.EmptyResult
+import com.enmanuelbergling.corntime.core.domain.util.Result
+
 /**
  * Chain of responsibility, ported from the CornTime iOS design.
  *
@@ -18,3 +23,16 @@ suspend fun <Request> ChainHandler<Request>.invoke(request: Request) {
     handle(request)
     next?.invoke(request)
 }
+
+/**
+ * Runs the chain and reports a [DataException] as a typed failure instead of throwing, so a ViewModel
+ * can keep whatever the handlers filled before the failing one. Cancellation and unexpected
+ * exceptions still propagate.
+ */
+suspend fun <Request> ChainHandler<Request>.invokeForResult(request: Request): EmptyResult<Error> =
+    try {
+        invoke(request)
+        Result.Success(Unit)
+    } catch (exception: DataException) {
+        Result.Failure(exception.error)
+    }
