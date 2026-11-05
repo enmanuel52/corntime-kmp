@@ -5,6 +5,7 @@ struct MoviesScreen: View {
     @State private var model = ScreenModels.movies()
     let navToMovieSection: (MovieSection) -> Void
     let navToMovieDetails: (Int32) -> Void
+    let navToSettings: () -> Void
 
     private func onMovie(_ movieId: Int32) {
         model.viewModel.onAction(action: MoviesActionOnMovieClick(movieId: movieId))
@@ -45,6 +46,15 @@ struct MoviesScreen: View {
         .listSectionSpacing(AppDimensions.medium)
         .scrollIndicators(.hidden)
         .navigationTitle("Movies")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: navToSettings) {
+                    Image(systemName: "person.crop.circle")
+                }
+                .accessibilityLabel("Profile")
+                .accessibilityIdentifier("movies.profile")
+            }
+        }
         .accessibilityIdentifier("movies.list")
         .errorAlert(
             state.error,
