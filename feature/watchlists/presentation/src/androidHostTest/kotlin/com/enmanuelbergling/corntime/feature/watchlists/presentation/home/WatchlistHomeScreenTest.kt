@@ -23,6 +23,7 @@ import com.enmanuelbergling.corntime.core.presentation.removal.RemovalKind
 import com.enmanuelbergling.corntime.core.presentation.removal.RemovalState
 import com.enmanuelbergling.corntime.core.testing.data.FakeMovieData
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.WatchlistTags
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsState
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.util.PHONE_QUALIFIERS
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.util.ROBOLECTRIC_SDK
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.util.setThemedContent
@@ -53,8 +54,12 @@ class WatchlistHomeScreenTest {
         removals: RemovalState = RemovalState(),
     ) = rule.setThemedContent {
         WatchlistHomeScreen(
-            state = WatchlistHomeState(PagingState(items = items, status = status), removals),
-            onAction = { allActions += it },
+            selectedTab = WatchlistTab.Movies,
+            onTabSelected = {},
+            moviesState = WatchlistHomeState(PagingState(items = items, status = status), removals),
+            onMoviesAction = { allActions += it },
+            tvShowsState = WatchlistTvShowsState(),
+            onTvShowsAction = {},
             onBack = { backs++ },
         )
     }

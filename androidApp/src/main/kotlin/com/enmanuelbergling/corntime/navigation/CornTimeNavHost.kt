@@ -17,10 +17,14 @@ import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.Actor
 import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.actorEntries
 import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.authEntries
 import com.enmanuelbergling.corntime.feature.favorites.presentation.navigation.FavoriteMoviesKey
+import com.enmanuelbergling.corntime.feature.favorites.presentation.navigation.FavoriteTvShowsKey
 import com.enmanuelbergling.corntime.feature.favorites.presentation.navigation.favoriteEntries
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.moviesEntries
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.settingsEntries
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.TvShowDetailsKey
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.rememberTvShowsSceneStrategy
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.navigation.tvShowsEntries
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.watchlistEntries
 import com.enmanuelbergling.corntime.shortcut.ListShortcutManager
 
@@ -41,6 +45,8 @@ fun CornTimeNavHost(
         backStack = state.backStack,
         onBack = state::back,
         modifier = modifier,
+        // seasons -> episodes -> episode details show side by side on wide windows
+        sceneStrategies = listOf(rememberTvShowsSceneStrategy()),
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
@@ -55,14 +61,24 @@ fun CornTimeNavHost(
                 // favorites belong to the account
                 onFavorites = if (state.isLoggedIn) ({ state.navigate(FavoriteMoviesKey) }) else null,
             )
+            tvShowsEntries(
+                backStack = state.backStack,
+                onNavigate = state::navigate,
+                onBack = state::back,
+                onActor = { id, name, imagePath -> state.navigate(ActorDetailsKey(id, imagePath, name)) },
+                onOpenDrawer = onOpenDrawer,
+                onFavorites = if (state.isLoggedIn) ({ state.navigate(FavoriteTvShowsKey) }) else null,
+            )
             favoriteEntries(
                 onMovieDetails = { state.navigate(MovieDetailsKey(it)) },
+                onTvShowDetails = { state.navigate(TvShowDetailsKey(it)) },
                 onBack = state::back,
             )
             watchlistEntries(
                 onNavigate = state::navigate,
                 onBack = state::back,
                 onMovieDetails = { state.navigate(MovieDetailsKey(it)) },
+                onTvShowDetails = { state.navigate(TvShowDetailsKey(it)) },
                 shortcuts = shortcuts,
                 onListDeleted = shortcuts::remove,
             )

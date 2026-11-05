@@ -23,6 +23,8 @@ kotlin {
             export(projects.feature.settings.presentation)
             export(projects.feature.movies.domain)
             export(projects.feature.movies.presentation)
+            export(projects.feature.tvshows.domain)
+            export(projects.feature.tvshows.presentation)
         }
     }
 
@@ -40,6 +42,8 @@ kotlin {
             api(projects.feature.settings.presentation)
             api(projects.feature.movies.domain)
             api(projects.feature.movies.presentation)
+            api(projects.feature.tvshows.domain)
+            api(projects.feature.tvshows.presentation)
             implementation(projects.core.data)
             implementation(projects.core.datastore)
             api(projects.core.sync)

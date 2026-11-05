@@ -21,6 +21,16 @@ import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewMo
 import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
+import com.enmanuelbergling.corntime.core.domain.model.TvShowsSection
+import com.enmanuelbergling.corntime.feature.favorites.presentation.tvshows.FavoriteTvShowsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.details.TvShowDetailsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.episodedetails.EpisodeDetailsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.episodes.EpisodesViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.home.TvShowsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.search.TvShowSearchViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.seasons.SeasonsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.section.TvShowSectionViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.section.MovieSectionViewModel
 import io.ktor.client.engine.mock.MockEngine
@@ -103,5 +113,23 @@ class KoinGraphTest : MainDispatcherTest() {
         assertThat(koin.get<WatchlistHomeViewModel>()).isNotNull()
         assertThat(koin.get<CreatedWatchListsViewModel>()).isNotNull()
         assertThat(koin.get<WatchListDetailsViewModel> { parametersOf(3) }).isNotNull()
+    }
+
+    @Test
+    fun givenAppGraph_whenResolvingEveryTvShowsViewModel_thenAllDependenciesAreSatisfied() {
+        startWithTestInfrastructure()
+        val koin = KoinPlatform.getKoin()
+
+        assertThat(koin.get<TvShowsViewModel>()).isNotNull()
+        assertThat(koin.get<TvShowDetailsViewModel> { parametersOf(1) }).isNotNull()
+        assertThat(koin.get<TvShowSearchViewModel>()).isNotNull()
+        assertThat(koin.get<SeasonsViewModel> { parametersOf(1) }).isNotNull()
+        assertThat(koin.get<EpisodesViewModel> { parametersOf(1, 2) }).isNotNull()
+        assertThat(koin.get<EpisodeDetailsViewModel> { parametersOf(1, 2, 3) }).isNotNull()
+        TvShowsSection.entries.forEach { section ->
+            assertThat(koin.get<TvShowSectionViewModel> { parametersOf(section) }).isNotNull()
+        }
+        assertThat(koin.get<FavoriteTvShowsViewModel>()).isNotNull()
+        assertThat(koin.get<WatchlistTvShowsViewModel>()).isNotNull()
     }
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="popular_tv_shows">Popular TV Shows</string>
+    <string name="top_rated_tv_shows">Top Rated TV Shows</string>
+    <string name="on_the_air_tv_shows">On The Air TV Shows</string>
+    <string name="airing_today_tv_shows">Airing Today TV Shows</string>
+    <string name="no_tv_shows_found">No TV shows found</string>
+    <string name="seasons">Seasons</string>
+    <string name="episodes">Episodes</string>
+    <string name="episode_details">Episode Details</string>
+    <string name="episode_count">%1$d episodes</string>
+    <string name="season_count">%1$d seasons</string>
+    <string name="see_all">See all</string>
+    <string name="overview">Overview</string>
+    <string name="duration_and_year">Duration %1$s (%2$s)</string>
+</resources>

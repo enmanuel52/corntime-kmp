@@ -54,4 +54,56 @@ enum ScreenModels {
     static func settings() -> ScreenModel<SettingsViewModel, SettingsState> {
         ScreenModel(make: { ViewModels.shared.settings() }, state: { $0.state })
     }
+
+    static func tvShows() -> ScreenModel<TvShowsViewModel, TvShowsState> {
+        ScreenModel(make: { ViewModels.shared.tvShows() }, state: { $0.state })
+    }
+
+    static func tvShowDetails(tvShowId: Int32) -> ScreenModel<TvShowDetailsViewModel, TvShowDetailsState> {
+        ScreenModel(make: { ViewModels.shared.tvShowDetails(tvShowId: tvShowId) }, state: { $0.state })
+    }
+
+    static func tvShowSection(_ section: TvShowsSection) -> ScreenModel<TvShowSectionViewModel, TvShowSectionState> {
+        ScreenModel(make: { ViewModels.shared.tvShowSection(section: section) }, state: { $0.state })
+    }
+
+    static func tvShowSearch() -> ScreenModel<TvShowSearchViewModel, TvShowSearchState> {
+        ScreenModel(make: { ViewModels.shared.tvShowSearch() }, state: { $0.state })
+    }
+
+    static func seasons(tvShowId: Int32) -> ScreenModel<SeasonsViewModel, SeasonsState> {
+        ScreenModel(make: { ViewModels.shared.seasons(tvShowId: tvShowId) }, state: { $0.state })
+    }
+
+    static func episodes(tvShowId: Int32, seasonNumber: Int32) -> ScreenModel<EpisodesViewModel, EpisodesState> {
+        ScreenModel(
+            make: { ViewModels.shared.episodes(tvShowId: tvShowId, seasonNumber: seasonNumber) },
+            state: { $0.state }
+        )
+    }
+
+    static func episodeDetails(
+        tvShowId: Int32,
+        seasonNumber: Int32,
+        episodeNumber: Int32
+    ) -> ScreenModel<EpisodeDetailsViewModel, EpisodeDetailsState> {
+        ScreenModel(
+            make: {
+                ViewModels.shared.episodeDetails(
+                    tvShowId: tvShowId,
+                    seasonNumber: seasonNumber,
+                    episodeNumber: episodeNumber
+                )
+            },
+            state: { $0.state }
+        )
+    }
+
+    static func favoriteTvShows() -> ScreenModel<FavoriteTvShowsViewModel, FavoriteTvShowsState> {
+        ScreenModel(make: { ViewModels.shared.favoriteTvShows() }, state: { $0.state })
+    }
+
+    static func watchlistTvShows() -> ScreenModel<WatchlistTvShowsViewModel, WatchlistTvShowsState> {
+        ScreenModel(make: { ViewModels.shared.watchlistTvShows() }, state: { $0.state })
+    }
 }
