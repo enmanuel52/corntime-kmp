@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Corntimekmp</string>
+    <string name="app_name" translatable="false">Corntimekmp</string>
     <string name="title_explore_movies">Explore Current and Upcoming Movies</string>
     <string name="title_filter_movies">Filter Movies by Genre</string>
     <string name="title_search">Search Movies by Title</string>

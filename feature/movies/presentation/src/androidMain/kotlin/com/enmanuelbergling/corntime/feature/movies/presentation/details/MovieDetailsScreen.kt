@@ -68,6 +68,7 @@ import com.enmanuelbergling.corntime.core.designsystem.theme.Heart
 import com.enmanuelbergling.corntime.core.presentation.error.messageResource
 import com.enmanuelbergling.corntime.core.presentation.event.ObserveAsEvents
 import com.enmanuelbergling.corntime.core.presentation.image.ImageUrls
+import com.enmanuelbergling.corntime.feature.movies.presentation.R
 import com.enmanuelbergling.corntime.feature.movies.presentation.components.RatingSummaryHeader
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -304,7 +305,7 @@ private fun LazyListScope.overview(overview: String) {
 
         Column(Modifier.padding(all = MaterialTheme.dimen.small)) {
             Text(
-                text = "Overview",
+                text = stringResource(R.string.overview),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )

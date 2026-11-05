@@ -81,4 +81,10 @@
     <string name="movie_rated">You have rated this movie</string>
     <string name="search">Search</string>
     <string name="filter">Filter</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="hello_user">Hello %1$s</string>
 </resources>
