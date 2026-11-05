@@ -3,6 +3,8 @@ import Shared
 enum Route: Hashable {
     case movieDetails(Int32)
     case section(MovieSection)
+    case moviesFilter
+    case movieReviews(movieId: Int32, averageRating: Double, totalReviews: Int32)
     case actorDetails(Int32, name: String)
     case favorites
     case createdLists

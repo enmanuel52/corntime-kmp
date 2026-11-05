@@ -6,6 +6,7 @@ struct MoviesScreen: View {
     let navToMovieSection: (MovieSection) -> Void
     let navToMovieDetails: (Int32) -> Void
     let navToSettings: () -> Void
+    let navToFilter: () -> Void
     let isLoggedIn: Bool
     let navToFavorites: () -> Void
 
@@ -58,7 +59,13 @@ struct MoviesScreen: View {
                     .accessibilityIdentifier("movies.favorites")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button(action: navToFilter) {
+                    Image(systemName: "slider.horizontal.3")
+                }
+                .accessibilityLabel("Filter")
+                .accessibilityIdentifier("movies.filter")
+
                 Button(action: navToSettings) {
                     Image(systemName: "person.crop.circle")
                 }

@@ -15,6 +15,23 @@ enum ScreenModels {
         ScreenModel(make: { ViewModels.shared.movieSection(section: section) }, state: { $0.state })
     }
 
+    static func moviesFilter() -> ScreenModel<MoviesFilterViewModel, MoviesFilterState> {
+        ScreenModel(make: { ViewModels.shared.moviesFilter() }, state: { $0.state })
+    }
+
+    static func reviews(
+        movieId: Int32,
+        averageRating: Double,
+        totalReviews: Int32
+    ) -> ScreenModel<ReviewsViewModel, ReviewsState> {
+        ScreenModel(
+            make: {
+                ViewModels.shared.reviews(movieId: movieId, averageRating: averageRating, totalReviews: totalReviews)
+            },
+            state: { $0.state }
+        )
+    }
+
     static func movieSearch() -> ScreenModel<MovieSearchViewModel, MovieSearchState> {
         ScreenModel(make: { ViewModels.shared.movieSearch() }, state: { $0.state })
     }

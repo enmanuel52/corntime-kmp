@@ -10,6 +10,8 @@ struct ContentView: View {
     let isLoggedIn: Bool
 
     @State private var query = ""
+    /// Bumped whenever the keyboard's search key is pressed, so the movie search can remember the query.
+    @State private var searchSubmissions = 0
     @State private var searchScope = SearchScopeKind.movies
     @State private var selectedTab = AppTab.movies
 
@@ -27,6 +29,7 @@ struct ContentView: View {
                         navToMovieSection: { navigation.append(.section($0)) },
                         navToMovieDetails: { navigation.append(.movieDetails($0)) },
                         navToSettings: { navigation.append(.settings) },
+                        navToFilter: { navigation.append(.moviesFilter) },
                         isLoggedIn: isLoggedIn,
                         navToFavorites: { navigation.append(.favorites) }
                     )
@@ -81,7 +84,8 @@ struct ContentView: View {
             Tab(value: .search, role: .search) {
                 NavigationStack(path: $searchNavigation) {
                     SearchScreen(
-                        query: query,
+                        query: $query,
+                        submissions: searchSubmissions,
                         scope: searchScope,
                         navToMovieDetails: { searchNavigation.append(.movieDetails($0)) },
                         navToTvShowDetails: { searchNavigation.append(.tvShowDetails($0)) }
@@ -91,6 +95,7 @@ struct ContentView: View {
                         }
                 }
                 .searchable(text: $query)
+                .onSubmit(of: .search) { searchSubmissions += 1 }
                 .searchScopes($searchScope) {
                     Text("Movies").tag(SearchScopeKind.movies)
                     Text("TV Shows").tag(SearchScopeKind.tvShows)
@@ -110,7 +115,15 @@ struct ContentView: View {
     private func destination(_ route: Route, navigate: @escaping (Route) -> Void) -> some View {
         switch route {
         case .movieDetails(let movieId):
-            MovieDetailsScreen(movieId: movieId) { navigate(.actorDetails($0, name: $1)) }
+            MovieDetailsScreen(
+                movieId: movieId,
+                navToActorDetails: { navigate(.actorDetails($0, name: $1)) },
+                navToReviews: { navigate(.movieReviews(movieId: $0, averageRating: $1, totalReviews: $2)) }
+            )
+        case .movieReviews(let movieId, let averageRating, let totalReviews):
+            ReviewsScreen(movieId: movieId, averageRating: averageRating, totalReviews: totalReviews)
+        case .moviesFilter:
+            MoviesFilterScreen { navigate(.movieDetails($0)) }
         case .actorDetails(let actorId, let name):
             ActorDetailsScreen(actorId: actorId, name: name) { navigate(.movieDetails($0)) }
         case .section(let section):
