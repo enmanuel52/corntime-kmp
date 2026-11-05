@@ -37,3 +37,8 @@ include(":androidApp")
 include(":shared")
 
 include(":core:domain")
+include(":core:data")
+include(":core:testing")
+include(":core:datastore")
+include(":core:presentation")
+include(":core:design-system")
