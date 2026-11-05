@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var navigation = [Route]()
     @State private var actorsNavigation = [Route]()
     @State private var listsNavigation = [Route]()
+    @State private var searchNavigation = [Route]()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -60,13 +61,14 @@ struct ContentView: View {
             }
 
             Tab(value: .search, role: .search) {
-                NavigationStack(path: $navigation) {
-                    SearchScreen(query: query) { navigation.append(.movieDetails($0)) }
+                NavigationStack(path: $searchNavigation) {
+                    SearchScreen(query: query) { searchNavigation.append(.movieDetails($0)) }
                         .navigationDestination(for: Route.self) { route in
-                            destination(route) { navigation.append($0) }
+                            destination(route) { searchNavigation.append($0) }
                         }
                 }
                 .searchable(text: $query)
+                .toolbar(searchNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
             }
         }
         .overlay(alignment: .topLeading) { UiTestProbe() }
