@@ -5,6 +5,10 @@ import com.enmanuelbergling.corntime.feature.actor.presentation.details.ActorDet
 import com.enmanuelbergling.corntime.feature.actor.presentation.home.ActorsViewModel
 import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
 import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
+import com.enmanuelbergling.corntime.feature.favorites.presentation.home.FavoriteMoviesViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.created.CreatedWatchListsViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.details.WatchListDetailsViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.home.WatchlistHomeViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
@@ -26,6 +30,16 @@ object ViewModels {
 
     fun actorDetails(actorId: Int): ScopedViewModel<ActorDetailsViewModel> =
         scoped { koin.get<ActorDetailsViewModel> { parametersOf(actorId) } }
+
+    fun favoriteMovies(): ScopedViewModel<FavoriteMoviesViewModel> = scoped { koin.get<FavoriteMoviesViewModel>() }
+
+    fun watchlistHome(): ScopedViewModel<WatchlistHomeViewModel> = scoped { koin.get<WatchlistHomeViewModel>() }
+
+    fun createdWatchLists(): ScopedViewModel<CreatedWatchListsViewModel> =
+        scoped { koin.get<CreatedWatchListsViewModel>() }
+
+    fun watchListDetails(listId: Int): ScopedViewModel<WatchListDetailsViewModel> =
+        scoped { koin.get<WatchListDetailsViewModel> { parametersOf(listId) } }
 
     fun movies(): ScopedViewModel<MoviesViewModel> = scoped { koin.get<MoviesViewModel>() }
 

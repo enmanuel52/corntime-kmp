@@ -7,6 +7,14 @@ import com.enmanuelbergling.corntime.core.datastore.DataStorePathProvider
 import com.enmanuelbergling.corntime.core.datastore.secure.SecureStorage
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
 import com.enmanuelbergling.corntime.core.testing.util.MainDispatcherTest
+import com.enmanuelbergling.corntime.core.domain.sync.MovieSyncScheduler
+import com.enmanuelbergling.corntime.core.domain.sync.TvShowSyncScheduler
+import com.enmanuelbergling.corntime.core.testing.sync.FakeMovieSyncScheduler
+import com.enmanuelbergling.corntime.core.testing.sync.FakeTvShowSyncScheduler
+import com.enmanuelbergling.corntime.feature.favorites.presentation.home.FavoriteMoviesViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.created.CreatedWatchListsViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.details.WatchListDetailsViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.home.WatchlistHomeViewModel
 import com.enmanuelbergling.corntime.feature.actor.presentation.details.ActorDetailsViewModel
 import com.enmanuelbergling.corntime.feature.actor.presentation.home.ActorsViewModel
 import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
@@ -47,6 +55,9 @@ class KoinGraphTest : MainDispatcherTest() {
                             "${FileSystem.SYSTEM_TEMPORARY_DIRECTORY}/graph-${Random.nextLong()}-$fileName"
                     }
                 }
+                // the real schedulers need an Android Context (WorkManager); iOS resolves the real ones in IosKoinBindingsTest
+                single<MovieSyncScheduler> { FakeMovieSyncScheduler() }
+                single<TvShowSyncScheduler> { FakeTvShowSyncScheduler() }
                 single<SecureStorage> {
                     object : SecureStorage {
                         override suspend fun read(key: String): String? = null
@@ -81,5 +92,16 @@ class KoinGraphTest : MainDispatcherTest() {
         assertThat(koin.get<SettingsViewModel>()).isNotNull()
         assertThat(koin.get<ActorsViewModel>()).isNotNull()
         assertThat(koin.get<ActorDetailsViewModel> { parametersOf(1) }).isNotNull()
+    }
+
+    @Test
+    fun givenAppGraph_whenResolvingFavoritesAndWatchlistViewModels_thenAllDependenciesAreSatisfied() {
+        startWithTestInfrastructure()
+        val koin = KoinPlatform.getKoin()
+
+        assertThat(koin.get<FavoriteMoviesViewModel>()).isNotNull()
+        assertThat(koin.get<WatchlistHomeViewModel>()).isNotNull()
+        assertThat(koin.get<CreatedWatchListsViewModel>()).isNotNull()
+        assertThat(koin.get<WatchListDetailsViewModel> { parametersOf(3) }).isNotNull()
     }
 }
