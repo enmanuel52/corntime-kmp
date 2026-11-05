@@ -8,7 +8,7 @@ struct CornTimeApp: App {
 
     init() {
         if Self.isUiTesting {
-            UiTesting.shared.start()
+            UiTesting.shared.start(showOnboarding: ProcessInfo.processInfo.arguments.contains("-showOnboarding"))
         } else {
             KoinInitializerKt.doInitKoin()
         }
@@ -16,7 +16,7 @@ struct CornTimeApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
     }
 }
