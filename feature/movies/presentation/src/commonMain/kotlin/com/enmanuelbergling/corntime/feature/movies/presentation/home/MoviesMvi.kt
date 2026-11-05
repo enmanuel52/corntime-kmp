@@ -5,6 +5,12 @@ import com.enmanuelbergling.corntime.core.domain.model.movie.Movie
 import com.enmanuelbergling.corntime.core.domain.model.user.UserDetails
 import com.enmanuelbergling.corntime.core.presentation.error.UiError
 
+/** One displayed home section; a plain type rather than a Pair so Swift gets named properties. */
+data class SectionMovies(
+    val section: MovieSection,
+    val movies: List<Movie>,
+)
+
 data class MoviesState(
     /** First page of every home section; a section is missing/empty until it loads. */
     val sections: Map<MovieSection, List<Movie>> = emptyMap(),
@@ -18,10 +24,12 @@ data class MoviesState(
     val isFeedEmpty: Boolean get() = sections.values.all { it.isEmpty() }
 
     /** Sections in the order they are displayed: now playing first, then the rest by declaration. */
-    val orderedSections: List<Pair<MovieSection, List<Movie>>>
+    val orderedSections: List<SectionMovies>
         get() = MovieSection.entries
             .sortedBy { if (it == MovieSection.NowPlaying) 0 else 1 }
-            .mapNotNull { section -> sections[section]?.takeIf { it.isNotEmpty() }?.let { section to it } }
+            .mapNotNull { section ->
+                sections[section]?.takeIf { it.isNotEmpty() }?.let { SectionMovies(section, it) }
+            }
 }
 
 sealed interface MoviesAction {

@@ -134,7 +134,7 @@ class MoviesViewModelTest : MainDispatcherTest() {
 
     @Test
     fun givenLoadedFeed_whenOrdering_thenNowPlayingIsFirstThenTheRestInDeclarationOrder() = runTest {
-        val sections = viewModel().state.value.orderedSections.map { it.first }
+        val sections = viewModel().state.value.orderedSections.map { it.section }
 
         assertThat(sections).containsExactly(
             MovieSection.NowPlaying,
