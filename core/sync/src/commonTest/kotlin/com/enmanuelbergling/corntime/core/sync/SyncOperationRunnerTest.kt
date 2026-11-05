@@ -29,7 +29,7 @@ class SyncOperationRunnerTest {
 
     @Test
     fun givenAllSixTypes_whenRunning_thenEachGoesToTheRightDataSource() = runTest {
-        val operations = SyncType.entries.map { SyncOperation(it, 7) }
+        val operations = SyncType.entries.map { SyncOperation(it, 7, listId = 3) }
 
         val remaining = runner.run(operations)
 
@@ -37,6 +37,7 @@ class SyncOperationRunnerTest {
         assertThat(user.callCount(UserRemoteFunction.RemoveMovieFromAccountWatchlist)).isEqualTo(1)
         assertThat(user.callCount(UserRemoteFunction.AddMovieToFavorites)).isEqualTo(1)
         assertThat(user.callCount(UserRemoteFunction.RemoveMovieFromFavorites)).isEqualTo(1)
+        assertThat(user.callsTo(UserRemoteFunction.DeleteMovieFromList)).containsExactly(listOf<Any?>(7, 3))
         assertThat(tv.callCount(TvRemoteFunction.RemoveTvFromAccountWatchlist)).isEqualTo(1)
         assertThat(tv.callCount(TvRemoteFunction.AddTvToFavorites)).isEqualTo(1)
         assertThat(tv.callCount(TvRemoteFunction.RemoveTvFromFavorites)).isEqualTo(1)
@@ -93,5 +94,21 @@ class SyncOperationRunnerTest {
     @Test
     fun givenNoOperations_whenRunning_thenNothingIsCalled() = runTest {
         assertThat(runner.run(emptyList())).isEmpty()
+    }
+
+    @Test
+    fun givenAListRemovalWithoutAList_whenRunning_thenItIsDroppedBecauseItCanNeverSucceed() = runTest {
+        val remaining = runner.run(listOf(SyncOperation(SyncType.RemoveMovieFromList, 1)))
+
+        assertThat(remaining).isEmpty()
+        assertThat(user.callCount(UserRemoteFunction.DeleteMovieFromList)).isEqualTo(0)
+    }
+
+    @Test
+    fun givenAListRemovalFailingOffline_whenRunning_thenItIsKept() = runTest {
+        user.fail(UserRemoteFunction.DeleteMovieFromList, DataError.Network.NoInternet)
+        val operation = SyncOperation(SyncType.RemoveMovieFromList, 1, listId = 2)
+
+        assertThat(runner.run(listOf(operation))).containsExactly(operation)
     }
 }

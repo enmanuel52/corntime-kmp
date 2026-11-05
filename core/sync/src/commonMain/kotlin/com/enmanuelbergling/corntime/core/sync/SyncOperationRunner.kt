@@ -28,6 +28,10 @@ class SyncOperationRunner(
         }
 
     private suspend fun send(operation: SyncOperation): NetworkResult<*> = when (operation.type) {
+        SyncType.RemoveMovieFromList -> operation.listId
+            // a list removal without a list can never succeed: drop it
+            ?.let { user.deleteMovieFromList(operation.id, it) }
+            ?: Result.Failure(DataError.Network.BadRequest)
         SyncType.RemoveMovieFromWatchlist -> user.removeMovieFromAccountWatchlist(operation.id)
         SyncType.AddMovieToFavorites -> user.addMovieToFavorites(operation.id)
         SyncType.RemoveMovieFromFavorites -> user.removeMovieFromFavorites(operation.id)

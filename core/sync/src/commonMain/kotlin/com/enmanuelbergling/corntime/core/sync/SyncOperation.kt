@@ -5,13 +5,15 @@ import kotlinx.serialization.json.Json
 
 /** One account change that has to reach TMDB, even if the app is closed or offline when it is made. */
 @Serializable
-data class SyncOperation(val type: SyncType, val id: Int)
+data class SyncOperation(val type: SyncType, val id: Int, val listId: Int? = null)
 
 @Serializable
 enum class SyncType {
     RemoveMovieFromWatchlist,
     AddMovieToFavorites,
     RemoveMovieFromFavorites,
+    /** Needs [SyncOperation.listId]. */
+    RemoveMovieFromList,
     RemoveTvFromWatchlist,
     AddTvToFavorites,
     RemoveTvFromFavorites,
@@ -22,6 +24,11 @@ object SyncOperations {
     /** Removes [deleted] and [favorites] from the watchlist first, then adds [favorites] to favorites. */
     fun movieWatchlist(deleted: List<Int>, favorites: List<Int>): List<SyncOperation> =
         (deleted + favorites).distinct().map { SyncOperation(SyncType.RemoveMovieFromWatchlist, it) } +
+            favorites.distinct().map { SyncOperation(SyncType.AddMovieToFavorites, it) }
+
+    /** Removes [deleted] and [favorites] from the list [listId] first, then adds [favorites] to favorites. */
+    fun movieList(listId: Int, deleted: List<Int>, favorites: List<Int>): List<SyncOperation> =
+        (deleted + favorites).distinct().map { SyncOperation(SyncType.RemoveMovieFromList, it, listId) } +
             favorites.distinct().map { SyncOperation(SyncType.AddMovieToFavorites, it) }
 
     fun movieFavoriteRemovals(movieIds: List<Int>): List<SyncOperation> =

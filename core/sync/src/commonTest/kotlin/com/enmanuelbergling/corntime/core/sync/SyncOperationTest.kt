@@ -20,6 +20,23 @@ class SyncOperationTest {
     }
 
     @Test
+    fun givenAList_whenPlanning_thenItemsLeaveThatListBeforeFavoritesAreAdded() {
+        val plan = SyncOperations.movieList(listId = 9, deleted = listOf(1), favorites = listOf(2))
+
+        assertThat(plan).containsExactly(
+            SyncOperation(SyncType.RemoveMovieFromList, 1, listId = 9),
+            SyncOperation(SyncType.RemoveMovieFromList, 2, listId = 9),
+            SyncOperation(SyncType.AddMovieToFavorites, 2),
+        )
+    }
+
+    @Test
+    fun givenAnOldPayloadWithoutAListId_whenDecoding_thenItStillReads() {
+        assertThat(decodeSyncOperations("""[{"type":"AddMovieToFavorites","id":3}]"""))
+            .containsExactly(SyncOperation(SyncType.AddMovieToFavorites, 3))
+    }
+
+    @Test
     fun givenRepeatedIds_whenPlanning_thenEachOperationAppearsOnce() {
         val plan = SyncOperations.movieWatchlist(deleted = listOf(1, 1), favorites = listOf(1))
 

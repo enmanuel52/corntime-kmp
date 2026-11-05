@@ -96,6 +96,16 @@ class WorkManagerSyncTest {
     }
 
     @Test
+    fun givenAListRemoval_whenTheWorkRuns_thenItDeletesFromThatListThenFavorites() {
+        movieScheduler().deleteFromList(listId = 4, deletedMovieIds = listOf(1), favoriteMovieIds = listOf(2))
+
+        runQueuedWork()
+
+        assertThat(user.callsTo(UserRemoteFunction.DeleteMovieFromList)).containsExactly(listOf<Any?>(1, 4), listOf<Any?>(2, 4))
+        assertThat(user.callsTo(UserRemoteFunction.AddMovieToFavorites).map { it.single() }).containsExactly(2)
+    }
+
+    @Test
     fun givenTvShows_whenScheduling_thenTheTvEndpointsAreUsed() {
         WorkManagerTvShowSyncScheduler(WorkManagerSyncEnqueuer(context)).deleteFromFavorite(listOf(8))
 

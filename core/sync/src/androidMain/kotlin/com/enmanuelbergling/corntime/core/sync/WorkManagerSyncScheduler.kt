@@ -32,6 +32,9 @@ class WorkManagerMovieSyncScheduler(private val enqueuer: WorkManagerSyncEnqueue
     override fun watchlist(deletedMovieIds: List<Int>, favoriteMovieIds: List<Int>) =
         enqueuer.enqueue(SyncOperations.movieWatchlist(deletedMovieIds, favoriteMovieIds))
 
+    override fun deleteFromList(listId: Int, deletedMovieIds: List<Int>, favoriteMovieIds: List<Int>) =
+        enqueuer.enqueue(SyncOperations.movieList(listId, deletedMovieIds, favoriteMovieIds))
+
     override fun deleteFromFavorite(movieIds: List<Int>) =
         enqueuer.enqueue(SyncOperations.movieFavoriteRemovals(movieIds))
 }

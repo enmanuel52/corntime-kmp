@@ -78,6 +78,10 @@ class IosMovieSyncScheduler(private val background: IosBackgroundSync) : MovieSy
         background.coordinator.enqueue(SyncOperations.movieWatchlist(deletedMovieIds, favoriteMovieIds))
     }
 
+    override fun deleteFromList(listId: Int, deletedMovieIds: List<Int>, favoriteMovieIds: List<Int>) {
+        background.coordinator.enqueue(SyncOperations.movieList(listId, deletedMovieIds, favoriteMovieIds))
+    }
+
     override fun deleteFromFavorite(movieIds: List<Int>) {
         background.coordinator.enqueue(SyncOperations.movieFavoriteRemovals(movieIds))
     }
