@@ -1,4 +1,4 @@
-rootProject.name = "CornTimeKmp"
+rootProject.name = "Corntimekmp"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
