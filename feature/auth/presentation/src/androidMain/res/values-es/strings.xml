@@ -1,0 +1,8 @@
+<resources>
+    <string name="username_required">El usuario es obligatorio</string>
+    <string name="password_required">La contraseña es obligatoria</string>
+    <string name="password_too_short">La contraseña debe tener al menos 8 caracteres</string>
+    <string name="invalid_credentials">Usuario o contraseña incorrectos</string>
+    <string name="no_account_question">¿Tienes una cuenta?</string>
+    <string name="back_icon_description">flecha atrás</string>
+</resources>

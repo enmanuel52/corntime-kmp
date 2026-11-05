@@ -1,0 +1,8 @@
+<resources>
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="password_too_short">Password must be at least 8 characters</string>
+    <string name="invalid_credentials">Wrong username or password</string>
+    <string name="no_account_question">Do you have an account?</string>
+    <string name="back_icon_description">arrow back</string>
+</resources>
