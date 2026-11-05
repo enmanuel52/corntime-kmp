@@ -2,6 +2,7 @@ package com.enmanuelbergling.corntime.core.testing.datasource
 
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.AuthPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SearchSuggestionPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.model.settings.DarkTheme
@@ -62,4 +63,25 @@ class FakeOnboardingPreferenceDataSource(initiallyOnboarding: Boolean = true) : 
     override suspend fun finishOnboarding() {
         onboarding.value = false
     }
+}
+
+class FakeSearchSuggestionPreferenceDataSource(initial: List<String> = emptyList()) : SearchSuggestionPreferenceDataSource {
+    val suggestions = MutableStateFlow(initial)
+
+    override suspend fun addSuggestion(query: String) {
+        val clean = query.trim()
+        if (clean.isEmpty()) return
+        suggestions.value = (listOf(clean) + suggestions.value.filterNot { it.equals(clean, ignoreCase = true) })
+            .take(SearchSuggestionPreferenceDataSource.MAX_SUGGESTIONS)
+    }
+
+    override suspend fun deleteSuggestion(query: String) {
+        suggestions.value -= query
+    }
+
+    override suspend fun clearSuggestions() {
+        suggestions.value = emptyList()
+    }
+
+    override fun getSuggestions(): Flow<List<String>> = suggestions
 }

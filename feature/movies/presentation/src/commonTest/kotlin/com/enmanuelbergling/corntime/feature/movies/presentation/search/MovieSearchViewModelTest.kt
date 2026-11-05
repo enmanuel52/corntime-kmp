@@ -2,6 +2,7 @@ package com.enmanuelbergling.corntime.feature.movies.presentation.search
 
 import app.cash.turbine.test
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
@@ -10,6 +11,7 @@ import assertk.assertions.isTrue
 import com.enmanuelbergling.corntime.core.domain.error.DataError
 import com.enmanuelbergling.corntime.core.testing.data.FakeMovieData
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeMovieRemoteDataSource
+import com.enmanuelbergling.corntime.core.testing.datasource.FakeSearchSuggestionPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.MovieRemoteFunction
 import com.enmanuelbergling.corntime.core.testing.util.MainDispatcherTest
 import kotlinx.coroutines.test.advanceTimeBy
@@ -20,10 +22,11 @@ import kotlin.test.Test
 class MovieSearchViewModelTest : MainDispatcherTest() {
 
     private val movies = FakeMovieRemoteDataSource()
+    private val suggestions = FakeSearchSuggestionPreferenceDataSource()
     private val perPage = FakeMovieData.MOVIES.size
     private val debounceMs = SEARCH_DEBOUNCE.inWholeMilliseconds
 
-    private fun viewModel() = MovieSearchViewModel(movies)
+    private fun viewModel() = MovieSearchViewModel(movies, suggestions)
 
     private fun searches() = movies.callsTo(MovieRemoteFunction.SearchMovie)
 
@@ -217,5 +220,96 @@ class MovieSearchViewModelTest : MainDispatcherTest() {
 
             assertThat(awaitItem()).isEqualTo(MovieSearchEvent.NavigateToDetails(4))
         }
+    }
+
+    @Test
+    fun givenSavedSuggestions_whenCreated_thenStateShowsThemWhileQueryIsBlank() = runTest {
+        suggestions.suggestions.value = listOf("dune", "alien")
+
+        val viewModel = viewModel()
+
+        assertThat(viewModel.state.value.suggestions).containsExactly("dune", "alien")
+        assertThat(viewModel.state.value.showSuggestions).isTrue()
+    }
+
+    @Test
+    fun givenSuggestions_whenTyping_thenTheyStopBeingShown() = runTest {
+        suggestions.suggestions.value = listOf("dune")
+        val viewModel = viewModel()
+
+        viewModel.type("a")
+
+        assertThat(viewModel.state.value.showSuggestions).isFalse()
+    }
+
+    @Test
+    fun givenNoSuggestions_whenQueryIsBlank_thenSuggestionsAreNotShown() = runTest {
+        assertThat(viewModel().state.value.showSuggestions).isFalse()
+    }
+
+    @Test
+    fun givenQuery_whenSubmitted_thenItIsSavedAsSuggestion() = runTest {
+        val viewModel = viewModel()
+        viewModel.type("  matrix ")
+
+        viewModel.onAction(MovieSearchAction.OnSearchSubmit)
+
+        assertThat(viewModel.state.value.suggestions).containsExactly("matrix")
+    }
+
+    @Test
+    fun givenBlankQuery_whenSubmitted_thenNothingIsSaved() = runTest {
+        val viewModel = viewModel()
+        viewModel.type("   ")
+
+        viewModel.onAction(MovieSearchAction.OnSearchSubmit)
+
+        assertThat(viewModel.state.value.suggestions).isEmpty()
+    }
+
+    @Test
+    fun givenSuggestion_whenClicked_thenItBecomesTheQueryAndIsSearched() = runTest {
+        val viewModel = viewModel()
+
+        viewModel.onAction(MovieSearchAction.OnSuggestionClick("alien"))
+        advanceTimeBy(debounceMs + 1)
+
+        assertThat(viewModel.state.value.query).isEqualTo("alien")
+        assertThat(searches()).isEqualTo(listOf(listOf<Any?>("alien", 1)))
+    }
+
+    @Test
+    fun givenSuggestions_whenOneIsDeleted_thenOthersStay() = runTest {
+        suggestions.suggestions.value = listOf("dune", "alien")
+        val viewModel = viewModel()
+
+        viewModel.onAction(MovieSearchAction.OnDeleteSuggestion("dune"))
+
+        assertThat(viewModel.state.value.suggestions).containsExactly("alien")
+    }
+
+    @Test
+    fun givenSuggestions_whenCleared_thenNoneRemain() = runTest {
+        suggestions.suggestions.value = listOf("dune", "alien")
+        val viewModel = viewModel()
+
+        viewModel.onAction(MovieSearchAction.OnClearSuggestions)
+
+        assertThat(viewModel.state.value.suggestions).isEmpty()
+    }
+
+    @Test
+    fun givenSearchResults_whenMovieClicked_thenTheSearchIsSavedAndNavigationHappensOnce() = runTest {
+        val viewModel = viewModel()
+        viewModel.type("batman")
+        advanceTimeBy(debounceMs + 1)
+
+        viewModel.events.test {
+            viewModel.onAction(MovieSearchAction.OnMovieClick(movieId = 7))
+
+            assertThat(awaitItem()).isEqualTo(MovieSearchEvent.NavigateToDetails(7))
+            expectNoEvents()
+        }
+        assertThat(suggestions.suggestions.value).containsExactly("batman")
     }
 }
