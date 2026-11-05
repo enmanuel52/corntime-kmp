@@ -7,6 +7,8 @@ import com.enmanuelbergling.corntime.core.datastore.DataStorePathProvider
 import com.enmanuelbergling.corntime.core.datastore.secure.SecureStorage
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
 import com.enmanuelbergling.corntime.core.testing.util.MainDispatcherTest
+import com.enmanuelbergling.corntime.feature.actor.presentation.details.ActorDetailsViewModel
+import com.enmanuelbergling.corntime.feature.actor.presentation.home.ActorsViewModel
 import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
 import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
@@ -77,5 +79,7 @@ class KoinGraphTest : MainDispatcherTest() {
         assertThat(koin.get<AppViewModel>()).isNotNull()
         assertThat(koin.get<LoginViewModel>()).isNotNull()
         assertThat(koin.get<SettingsViewModel>()).isNotNull()
+        assertThat(koin.get<ActorsViewModel>()).isNotNull()
+        assertThat(koin.get<ActorDetailsViewModel> { parametersOf(1) }).isNotNull()
     }
 }

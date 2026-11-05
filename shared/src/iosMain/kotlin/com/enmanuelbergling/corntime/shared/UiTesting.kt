@@ -4,6 +4,7 @@ import com.enmanuelbergling.corntime.core.domain.datasource.preferences.AuthPref
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.remote.ActorRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.AuthRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.MovieRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.TvRemoteDataSource
@@ -11,6 +12,7 @@ import com.enmanuelbergling.corntime.core.domain.datasource.remote.UserRemoteDat
 import com.enmanuelbergling.corntime.core.domain.error.DataError
 import com.enmanuelbergling.corntime.core.domain.model.auth.CreateSessionPost
 import com.enmanuelbergling.corntime.core.domain.util.Result
+import com.enmanuelbergling.corntime.core.testing.datasource.FakeActorRemoteDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthRemoteDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeOnboardingPreferenceDataSource
@@ -41,6 +43,7 @@ object UiTesting {
     private val session = FakeAuthPreferenceDataSource()
     private val account = FakeUserRemoteDataSource()
     private val login = FakeAuthRemoteDataSource()
+    private val actors = FakeActorRemoteDataSource().apply { totalPages = 3 }
 
     /** Like the real API: the account is only available once a session exists. */
     private val user = object : UserRemoteDataSource by account {
@@ -71,6 +74,7 @@ object UiTesting {
         single<MovieRemoteDataSource> { movies }
         single<UserRemoteDataSource> { user }
         single<AuthRemoteDataSource> { auth }
+        single<ActorRemoteDataSource> { actors }
         single<OnboardingPreferenceDataSource> { FakeOnboardingPreferenceDataSource(initiallyOnboarding = showOnboarding) }
         single<TvRemoteDataSource> { FakeTvRemoteDataSource() }
         single<UserPreferenceDataSource> { FakeUserPreferenceDataSource() }

@@ -4,12 +4,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.navigation3.runtime.NavKey
 import com.enmanuelbergling.corntime.core.designsystem.R
+import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.SettingsKey
 
 /**
- * Destinations reachable from the drawer. TV shows, actors and lists are added here as their
- * features land.
+ * Destinations reachable from the drawer. TV shows and lists are added here as their features land.
  */
 enum class TopDestination(
     @StringRes val label: Int,
@@ -22,5 +22,6 @@ enum class TopDestination(
     val drawerGesture: Boolean = true,
 ) {
     Movies(R.string.movies, R.drawable.film_solid, R.drawable.film_outline, MoviesHomeKey),
+    Actors(R.string.actors, R.drawable.check_badge_solid, R.drawable.check_badge_outline, ActorsKey),
     Settings(R.string.settings, R.drawable.cog_solid, R.drawable.cog_outline, SettingsKey, drawerGesture = false),
 }

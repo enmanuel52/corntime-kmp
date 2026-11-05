@@ -12,6 +12,8 @@ kotlin {
             // Everything SwiftUI touches must be exported from the umbrella framework.
             export(projects.core.domain)
             export(projects.core.presentation)
+            export(projects.feature.actor.domain)
+            export(projects.feature.actor.presentation)
             export(projects.feature.auth.domain)
             export(projects.feature.auth.presentation)
             export(projects.feature.settings.presentation)
@@ -24,6 +26,8 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.domain)
             api(projects.core.presentation)
+            api(projects.feature.actor.domain)
+            api(projects.feature.actor.presentation)
             api(projects.feature.auth.domain)
             api(projects.feature.auth.presentation)
             api(projects.feature.settings.presentation)

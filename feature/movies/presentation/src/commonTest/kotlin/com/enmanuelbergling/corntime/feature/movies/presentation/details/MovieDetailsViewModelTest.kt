@@ -226,12 +226,37 @@ class MovieDetailsViewModelTest : MainDispatcherTest() {
     }
 
     @Test
-    fun givenPersonAndBackActions_whenHandled_thenEachEmitsItsEventOnce() = runTest {
+    fun givenACastMember_whenClicked_thenTheEventCarriesTheirNameAndPhoto() = runTest {
+        val viewModel = viewModel()
+        val person = viewModel.current.cast.first()
+
+        viewModel.events.test {
+            viewModel.onAction(MovieDetailsAction.OnPersonClick(person.id))
+
+            assertThat(awaitItem())
+                .isEqualTo(MovieDetailsEvent.NavigateToActor(person.id, person.name, person.profilePath))
+        }
+    }
+
+    @Test
+    fun givenAnUnknownPerson_whenClicked_thenTheEventStillNavigatesWithBlankPreview() = runTest {
         val viewModel = viewModel()
 
         viewModel.events.test {
-            viewModel.onAction(MovieDetailsAction.OnPersonClick(personId = 55))
-            assertThat(awaitItem()).isEqualTo(MovieDetailsEvent.NavigateToActor(55))
+            viewModel.onAction(MovieDetailsAction.OnPersonClick(personId = 999_999))
+
+            assertThat(awaitItem()).isEqualTo(MovieDetailsEvent.NavigateToActor(999_999, "", null))
+        }
+    }
+
+    @Test
+    fun givenPersonAndBackActions_whenHandled_thenEachEmitsItsEventOnce() = runTest {
+        val viewModel = viewModel()
+        val person = viewModel.current.cast.first()
+
+        viewModel.events.test {
+            viewModel.onAction(MovieDetailsAction.OnPersonClick(personId = person.id))
+            assertThat(awaitItem()).isEqualTo(MovieDetailsEvent.NavigateToActor(person.id, person.name, person.profilePath))
 
             viewModel.onAction(MovieDetailsAction.OnBack)
             assertThat(awaitItem()).isEqualTo(MovieDetailsEvent.NavigateBack)

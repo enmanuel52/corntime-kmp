@@ -2,7 +2,7 @@ import Shared
 import SwiftUI
 
 enum AppTab {
-    case movies, search
+    case movies, actors, search
 }
 
 struct ContentView: View {
@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var selectedTab = AppTab.movies
 
     @State private var navigation = [Route]()
+    @State private var actorsNavigation = [Route]()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -25,6 +26,16 @@ struct ContentView: View {
                     }
                 }
                 .toolbar(navigation.isEmpty ? .visible : .hidden, for: .tabBar)
+            }
+
+            Tab("Actors", systemImage: "person.2", value: .actors) {
+                NavigationStack(path: $actorsNavigation) {
+                    ActorsScreen { actorsNavigation.append(.actorDetails($0, name: $1)) }
+                        .navigationDestination(for: Route.self) { route in
+                            destination(route) { actorsNavigation.append($0) }
+                        }
+                }
+                .toolbar(actorsNavigation.isEmpty ? .visible : .hidden, for: .tabBar)
             }
 
             Tab(value: .search, role: .search) {
@@ -44,8 +55,9 @@ struct ContentView: View {
     private func destination(_ route: Route, navigate: @escaping (Route) -> Void) -> some View {
         switch route {
         case .movieDetails(let movieId):
-            // Actor details arrive with the actor feature.
-            MovieDetailsScreen(movieId: movieId, navToActorDetails: { _ in })
+            MovieDetailsScreen(movieId: movieId) { navigate(.actorDetails($0, name: $1)) }
+        case .actorDetails(let actorId, let name):
+            ActorDetailsScreen(actorId: actorId, name: name) { navigate(.movieDetails($0)) }
         case .section(let section):
             SectionScreen(section: section) { navigate(.movieDetails($0)) }
         case .settings:

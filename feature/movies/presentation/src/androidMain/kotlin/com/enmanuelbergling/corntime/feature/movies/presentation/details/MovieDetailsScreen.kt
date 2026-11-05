@@ -82,7 +82,7 @@ object MovieDetailsTags {
 @Composable
 fun MovieDetailsRoot(
     movieId: Int,
-    onActor: (actorId: Int) -> Unit,
+    onActor: (actorId: Int, name: String, imagePath: String?) -> Unit,
     onBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<MovieDetailsViewModel> { parametersOf(movieId) }
@@ -91,7 +91,7 @@ fun MovieDetailsRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             MovieDetailsEvent.NavigateBack -> onBack()
-            is MovieDetailsEvent.NavigateToActor -> onActor(event.actorId)
+            is MovieDetailsEvent.NavigateToActor -> onActor(event.actorId, event.name, event.profilePath)
         }
     }
 

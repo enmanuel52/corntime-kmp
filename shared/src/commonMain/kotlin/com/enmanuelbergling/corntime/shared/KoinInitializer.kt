@@ -3,6 +3,8 @@ package com.enmanuelbergling.corntime.shared
 import com.enmanuelbergling.corntime.core.data.di.CoreDataModule
 import com.enmanuelbergling.corntime.core.datastore.di.CoreDatastoreModule
 import com.enmanuelbergling.corntime.core.domain.di.CoreDomainModule
+import com.enmanuelbergling.corntime.feature.actor.domain.di.ActorDomainModule
+import com.enmanuelbergling.corntime.feature.actor.presentation.di.ActorPresentationModule
 import com.enmanuelbergling.corntime.feature.auth.domain.di.AuthDomainModule
 import com.enmanuelbergling.corntime.feature.auth.presentation.di.AuthPresentationModule
 import com.enmanuelbergling.corntime.feature.movies.domain.di.MoviesDomainModule
@@ -21,6 +23,8 @@ import org.koin.plugin.module.dsl.startKoin
         CoreDomainModule::class,
         CoreDataModule::class,
         CoreDatastoreModule::class,
+        ActorDomainModule::class,
+        ActorPresentationModule::class,
         AuthDomainModule::class,
         AuthPresentationModule::class,
         SettingsPresentationModule::class,

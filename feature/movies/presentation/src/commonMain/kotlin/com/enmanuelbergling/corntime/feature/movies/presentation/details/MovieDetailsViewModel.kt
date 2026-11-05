@@ -47,7 +47,7 @@ class MovieDetailsViewModel(
             MovieDetailsAction.OnDismissError -> _state.update { it.copy(error = null) }
             MovieDetailsAction.OnWatchlistClick -> toggleWatchlist()
             MovieDetailsAction.OnFavoriteClick -> toggleFavorite()
-            is MovieDetailsAction.OnPersonClick -> send(MovieDetailsEvent.NavigateToActor(action.personId))
+            is MovieDetailsAction.OnPersonClick -> openPerson(action.personId)
         }
     }
 
@@ -124,6 +124,12 @@ class MovieDetailsViewModel(
             }
             next.finish()
         }
+    }
+
+    private fun openPerson(personId: Int) {
+        val state = _state.value
+        val person = (state.cast + state.crew).firstOrNull { it.id == personId }
+        send(MovieDetailsEvent.NavigateToActor(personId, person?.name.orEmpty(), person?.profilePath))
     }
 
     private fun send(event: MovieDetailsEvent) {

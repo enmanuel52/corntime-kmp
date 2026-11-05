@@ -7,6 +7,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isNull
 import assertk.assertions.isTrue
+import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorDetailsKey
+import com.enmanuelbergling.corntime.feature.actor.presentation.navigation.ActorsKey
 import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.LoginKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
@@ -109,5 +111,27 @@ class CornTimeAppStateTest {
 
         assertThat(loggedOut.none { it.loginRequired }).isTrue()
         assertThat(loggedIn).isEqualTo(TopDestination.entries)
+    }
+
+    @Test
+    fun givenMovies_whenChoosingActorsInTheDrawer_thenTheStackIsMoviesThenActorsAndTheDrawerGestureStaysOn() {
+        val state = state()
+
+        state.navigateToDrawerDestination(TopDestination.Actors)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey, ActorsKey)
+        assertThat(state.isSelected(TopDestination.Actors)).isTrue()
+        assertThat(state.mainDrawerEnabled).isTrue()
+    }
+
+    @Test
+    fun givenActorDetails_whenGoingBack_thenReturnsToTheActorsList() {
+        val state = state(MoviesHomeKey, ActorsKey)
+
+        state.navigate(ActorDetailsKey(id = 5, imagePath = "/a.jpg", name = "Tim"))
+        assertThat(state.mainDrawerEnabled).isFalse()
+
+        state.back()
+        assertThat(state.currentKey).isEqualTo(ActorsKey)
     }
 }

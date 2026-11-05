@@ -24,7 +24,7 @@ data class MovieSectionKey(val section: MovieSection) : NavKey
 fun EntryProviderScope<NavKey>.moviesEntries(
     onNavigate: (NavKey) -> Unit,
     onBack: () -> Unit,
-    onActor: (actorId: Int) -> Unit = {},
+    onActor: (actorId: Int, name: String, imagePath: String?) -> Unit = { _, _, _ -> },
     onOpenDrawer: (() -> Unit)? = null,
     onFilter: (() -> Unit)? = null,
     onFavorites: (() -> Unit)? = null,
