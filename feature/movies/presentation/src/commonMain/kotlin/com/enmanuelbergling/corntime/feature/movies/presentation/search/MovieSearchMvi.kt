@@ -8,6 +8,9 @@ data class MovieSearchState(
     val query: String = "",
     val paging: PagingState<Movie> = PagingState(),
 ) {
+    /** The loaded movies with a concrete element type (generic `items` is untyped in Swift). */
+    val movies: List<Movie> get() = paging.items
+
     val hasQuery: Boolean get() = query.isNotBlank()
 
     /** A finished search that found nothing for a non-blank query. */
