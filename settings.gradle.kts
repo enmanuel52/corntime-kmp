@@ -1,6 +1,9 @@
-rootProject.name = "Corntimekmp"
+rootProject.name = "CornTimeKmp"
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -24,9 +27,13 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://jitpack.io") {
+            mavenContent { includeGroup("com.github.skydoves") }
+        }
     }
 }
 
 include(":androidApp")
-include(":sharedLogic")
-include(":sharedUI")
+include(":shared")
+
+include(":core:domain")
