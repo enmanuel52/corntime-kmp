@@ -17,7 +17,8 @@ struct ContentView: View {
                 NavigationStack(path: $navigation) {
                     MoviesScreen(
                         navToMovieSection: { navigation.append(.section($0)) },
-                        navToMovieDetails: { navigation.append(.movieDetails($0)) }
+                        navToMovieDetails: { navigation.append(.movieDetails($0)) },
+                        navToSettings: { navigation.append(.settings) }
                     )
                     .navigationDestination(for: Route.self) { route in
                         destination(route) { navigation.append($0) }
@@ -47,6 +48,10 @@ struct ContentView: View {
             MovieDetailsScreen(movieId: movieId, navToActorDetails: { _ in })
         case .section(let section):
             SectionScreen(section: section) { navigate(.movieDetails($0)) }
+        case .settings:
+            SettingsScreen { navigate(.login) }
+        case .login:
+            LoginScreen(onLoggedIn: {})
         }
     }
 }

@@ -1,0 +1,113 @@
+package com.enmanuelbergling.corntime.navigation
+
+import androidx.navigation3.runtime.NavKey
+import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
+import assertk.assertions.isNull
+import assertk.assertions.isTrue
+import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.LoginKey
+import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
+import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
+import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.SettingsKey
+import kotlin.test.Test
+
+class CornTimeAppStateTest {
+    private fun state(
+        vararg stack: NavKey = arrayOf(MoviesHomeKey),
+        isLoggedIn: Boolean = false,
+    ) = CornTimeAppState(stack.toMutableList(), isLoggedIn = isLoggedIn)
+
+    @Test
+    fun givenMoviesHome_whenCheckingTheDrawer_thenMoviesIsSelectedAndTheGestureIsEnabled() {
+        val state = state()
+
+        assertThat(state.isSelected(TopDestination.Movies)).isTrue()
+        assertThat(state.isSelected(TopDestination.Settings)).isFalse()
+        assertThat(state.mainDrawerEnabled).isTrue()
+    }
+
+    @Test
+    fun givenAMovieDetails_whenCheckingTheDrawer_thenNothingIsSelectedAndTheGestureIsOff() {
+        val state = state(MoviesHomeKey, MovieDetailsKey(1))
+
+        assertThat(state.currentTopDestination).isNull()
+        assertThat(state.mainDrawerEnabled).isFalse()
+    }
+
+    @Test
+    fun givenSettings_whenCheckingTheDrawer_thenTheGestureIsOffEvenThoughItIsATopDestination() {
+        val state = state(MoviesHomeKey, SettingsKey)
+
+        assertThat(state.isSelected(TopDestination.Settings)).isTrue()
+        assertThat(state.mainDrawerEnabled).isFalse()
+    }
+
+    @Test
+    fun givenDetailsOpen_whenChoosingSettingsInTheDrawer_thenTheStackIsMoviesThenSettings() {
+        val state = state(MoviesHomeKey, MovieDetailsKey(1), MovieDetailsKey(2))
+
+        state.navigateToDrawerDestination(TopDestination.Settings)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey, SettingsKey)
+    }
+
+    @Test
+    fun givenSettings_whenChoosingMoviesInTheDrawer_thenTheStackIsJustMovies() {
+        val state = state(MoviesHomeKey, SettingsKey)
+
+        state.navigateToDrawerDestination(TopDestination.Movies)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenSettings_whenGoingBack_thenReturnsToMovies() {
+        val state = state(MoviesHomeKey, SettingsKey)
+
+        state.back()
+
+        assertThat(state.currentKey).isEqualTo(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenOnlyTheRoot_whenGoingBack_thenTheStackIsNeverEmptied() {
+        val state = state()
+
+        state.back()
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenSettings_whenLoggingInAndSucceeding_thenTheAppRestartsFromMoviesWithoutLoginInTheStack() {
+        val state = state(MoviesHomeKey, SettingsKey)
+
+        state.navigateToLogin()
+        assertThat(state.currentKey).isEqualTo(LoginKey)
+
+        state.onLoginSucceeded()
+        assertThat(state.backStack).containsExactly(MoviesHomeKey)
+    }
+
+    @Test
+    fun givenLoginAbandoned_whenGoingBack_thenReturnsToSettings() {
+        val state = state(MoviesHomeKey, SettingsKey)
+        state.navigateToLogin()
+
+        state.back()
+
+        assertThat(state.currentKey).isEqualTo(SettingsKey)
+    }
+
+    @Test
+    fun givenLoggedOut_whenListingDrawerDestinations_thenLoginRequiredOnesAreHidden() {
+        // no destination requires login yet; this guards the rule for lists, added with that feature
+        val loggedOut = state(isLoggedIn = false).drawerDestinations
+        val loggedIn = state(isLoggedIn = true).drawerDestinations
+
+        assertThat(loggedOut.none { it.loginRequired }).isTrue()
+        assertThat(loggedIn).isEqualTo(TopDestination.entries)
+    }
+}

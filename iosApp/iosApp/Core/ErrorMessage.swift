@@ -29,3 +29,23 @@ extension MovieSection {
         }
     }
 }
+
+extension LoginFieldError {
+    var message: String {
+        switch self {
+        case .usernameRequired: return String(localized: "Username is required")
+        case .passwordRequired: return String(localized: "Password is required")
+        case .passwordTooShort: return String(localized: "Password must be at least 8 characters")
+        }
+    }
+}
+
+extension DarkTheme {
+    var title: String {
+        switch self {
+        case .system: return String(localized: "System")
+        case .no: return String(localized: "Light")
+        case .yes: return String(localized: "Dark")
+        }
+    }
+}

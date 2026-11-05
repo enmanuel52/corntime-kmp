@@ -1,6 +1,7 @@
 package com.enmanuelbergling.corntime.core.testing.datasource
 
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.AuthPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.model.settings.DarkTheme
@@ -51,5 +52,14 @@ class FakeSettingsPreferenceDataSource(
     override fun getDynamicColor(): Flow<Boolean> = dynamicColor
     override suspend fun setDynamicColor(active: Boolean) {
         dynamicColor.value = active
+    }
+}
+
+class FakeOnboardingPreferenceDataSource(initiallyOnboarding: Boolean = true) : OnboardingPreferenceDataSource {
+    val onboarding = MutableStateFlow(initiallyOnboarding)
+
+    override fun isOnboarding(): Flow<Boolean> = onboarding
+    override suspend fun finishOnboarding() {
+        onboarding.value = false
     }
 }

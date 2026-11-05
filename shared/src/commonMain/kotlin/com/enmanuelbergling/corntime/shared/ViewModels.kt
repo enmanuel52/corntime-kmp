@@ -1,6 +1,8 @@
 package com.enmanuelbergling.corntime.shared
 
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
+import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
+import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
@@ -11,6 +13,12 @@ import org.koin.mp.KoinPlatform
 /** The way SwiftUI obtains ViewModels: one scoped instance per screen, built by the Koin graph. */
 object ViewModels {
     private val koin get() = KoinPlatform.getKoin()
+
+    fun app(): ScopedViewModel<AppViewModel> = scoped { koin.get<AppViewModel>() }
+
+    fun login(): ScopedViewModel<LoginViewModel> = scoped { koin.get<LoginViewModel>() }
+
+    fun settings(): ScopedViewModel<SettingsViewModel> = scoped { koin.get<SettingsViewModel>() }
 
     fun movies(): ScopedViewModel<MoviesViewModel> = scoped { koin.get<MoviesViewModel>() }
 
