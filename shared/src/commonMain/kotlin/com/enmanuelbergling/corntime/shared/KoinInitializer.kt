@@ -11,6 +11,8 @@ import com.enmanuelbergling.corntime.core.sync.di.CoreSyncModule
 import com.enmanuelbergling.corntime.feature.favorites.presentation.di.FavoritesPresentationModule
 import com.enmanuelbergling.corntime.feature.movies.domain.di.MoviesDomainModule
 import com.enmanuelbergling.corntime.feature.movies.presentation.di.MoviesPresentationModule
+import com.enmanuelbergling.corntime.feature.tvshows.domain.di.TvShowsDomainModule
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.di.TvShowsPresentationModule
 import com.enmanuelbergling.corntime.feature.settings.presentation.di.SettingsPresentationModule
 import com.enmanuelbergling.corntime.feature.watchlists.domain.di.WatchlistsDomainModule
 import com.enmanuelbergling.corntime.feature.watchlists.presentation.di.WatchlistsPresentationModule
@@ -35,6 +37,8 @@ import org.koin.plugin.module.dsl.startKoin
         SettingsPresentationModule::class,
         MoviesDomainModule::class,
         MoviesPresentationModule::class,
+        TvShowsDomainModule::class,
+        TvShowsPresentationModule::class,
         FavoritesPresentationModule::class,
         WatchlistsDomainModule::class,
         WatchlistsPresentationModule::class,

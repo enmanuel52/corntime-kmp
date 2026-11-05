@@ -1,6 +1,7 @@
 package com.enmanuelbergling.corntime.shared
 
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
+import com.enmanuelbergling.corntime.core.domain.model.TvShowsSection
 import com.enmanuelbergling.corntime.feature.actor.presentation.details.ActorDetailsViewModel
 import com.enmanuelbergling.corntime.feature.actor.presentation.home.ActorsViewModel
 import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
@@ -13,6 +14,15 @@ import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDe
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.section.MovieSectionViewModel
+import com.enmanuelbergling.corntime.feature.favorites.presentation.tvshows.FavoriteTvShowsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.details.TvShowDetailsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.episodedetails.EpisodeDetailsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.episodes.EpisodesViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.home.TvShowsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.search.TvShowSearchViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.seasons.SeasonsViewModel
+import com.enmanuelbergling.corntime.feature.tvshows.presentation.section.TvShowSectionViewModel
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.tvshows.WatchlistTvShowsViewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.mp.KoinPlatform
 
@@ -50,4 +60,27 @@ object ViewModels {
         scoped { koin.get<MovieSectionViewModel> { parametersOf(section) } }
 
     fun movieSearch(): ScopedViewModel<MovieSearchViewModel> = scoped { koin.get<MovieSearchViewModel>() }
+
+    fun tvShows(): ScopedViewModel<TvShowsViewModel> = scoped { koin.get<TvShowsViewModel>() }
+
+    fun tvShowDetails(tvShowId: Int): ScopedViewModel<TvShowDetailsViewModel> =
+        scoped { koin.get<TvShowDetailsViewModel> { parametersOf(tvShowId) } }
+
+    fun tvShowSection(section: TvShowsSection): ScopedViewModel<TvShowSectionViewModel> =
+        scoped { koin.get<TvShowSectionViewModel> { parametersOf(section) } }
+
+    fun tvShowSearch(): ScopedViewModel<TvShowSearchViewModel> = scoped { koin.get<TvShowSearchViewModel>() }
+
+    fun seasons(tvShowId: Int): ScopedViewModel<SeasonsViewModel> =
+        scoped { koin.get<SeasonsViewModel> { parametersOf(tvShowId) } }
+
+    fun episodes(tvShowId: Int, seasonNumber: Int): ScopedViewModel<EpisodesViewModel> =
+        scoped { koin.get<EpisodesViewModel> { parametersOf(tvShowId, seasonNumber) } }
+
+    fun episodeDetails(tvShowId: Int, seasonNumber: Int, episodeNumber: Int): ScopedViewModel<EpisodeDetailsViewModel> =
+        scoped { koin.get<EpisodeDetailsViewModel> { parametersOf(tvShowId, seasonNumber, episodeNumber) } }
+
+    fun favoriteTvShows(): ScopedViewModel<FavoriteTvShowsViewModel> = scoped { koin.get<FavoriteTvShowsViewModel>() }
+
+    fun watchlistTvShows(): ScopedViewModel<WatchlistTvShowsViewModel> = scoped { koin.get<WatchlistTvShowsViewModel>() }
 }
