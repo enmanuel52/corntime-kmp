@@ -1,0 +1,38 @@
+package com.enmanuelbergling.corntime.feature.favorites.presentation.home
+
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.enmanuelbergling.corntime.feature.favorites.presentation.util.setThemedContent
+
+private const val ANIMATION_SETTLE_MS = 2_000L
+
+/** Encapsulates every interaction with [FavoriteMoviesScreen] so tests read as intent. */
+class FavoriteMoviesRobot(private val rule: ComposeContentTestRule) {
+    private val allActions = mutableListOf<FavoriteMoviesAction>()
+
+    /** What the user caused; the grid's own near-the-end paging requests are excluded. */
+    val actions get() = allActions.filter { it != FavoriteMoviesAction.OnLoadNextPage }
+    val pagingRequests get() = allActions.count { it == FavoriteMoviesAction.OnLoadNextPage }
+
+    fun show(state: FavoriteMoviesState) = apply {
+        rule.setThemedContent { FavoriteMoviesScreen(state = state, onAction = { allActions += it }) }
+        rule.mainClock.advanceTimeBy(ANIMATION_SETTLE_MS)
+    }
+
+    fun assertTextVisible(text: String) = apply { rule.onNodeWithText(text, substring = true).assertIsDisplayed() }
+    fun assertTextAbsent(text: String) = apply { rule.onNodeWithText(text, substring = true).assertDoesNotExist() }
+    fun assertRetryFooterVisible() = apply { rule.onNodeWithTag(FavoriteMoviesTags.RETRY_FOOTER).assertIsDisplayed() }
+
+    /** Posters are the clickable part of a movie card. */
+    fun clickMovieAt(index: Int) = apply { rule.onAllNodesWithContentDescription("movie image")[index].performClick() }
+    fun clickRetry() = apply { rule.onNodeWithText("Retry").performClick() }
+    fun clickRetryFooter() = apply { rule.onNodeWithTag(FavoriteMoviesTags.RETRY_FOOTER).performClick() }
+    fun clickUndo() = apply { rule.onNodeWithText("Undo").performClick() }
+    fun clickAccept() = apply { rule.onNodeWithText("Accept").performClick() }
+    fun clickBack() = apply { rule.onNodeWithContentDescription("back icon").performClick() }
+}

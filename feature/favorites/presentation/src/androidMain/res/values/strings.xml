@@ -1,0 +1,5 @@
+<resources>
+    <string name="favorites">Favorites</string>
+    <string name="movie_removed_from_favorites">Movie removed from favorites</string>
+    <string name="no_favorites_yet">No favorites yet</string>
+</resources>
