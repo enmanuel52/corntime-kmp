@@ -1,6 +1,8 @@
 package com.enmanuelbergling.corntime.core.presentation.paging
 
 import com.enmanuelbergling.corntime.core.domain.error.DataError
+import com.enmanuelbergling.corntime.core.presentation.error.UiError
+import com.enmanuelbergling.corntime.core.presentation.error.toUiError
 
 sealed interface PagingStatus {
     /** Ready to load the next page (or nothing requested yet). */
@@ -33,6 +35,9 @@ data class PagingState<out T>(
     val isLoading: Boolean get() = isLoadingFirstPage || isLoadingMore
     val endReached: Boolean get() = status is PagingStatus.EndReached
     val error: DataError.Network? get() = (status as? PagingStatus.Failed)?.error
+
+    /** The failure as a localizable category, ready for either platform to show. */
+    val uiError: UiError? get() = error?.toUiError()
 
     /** Loaded, finished and nothing came back. */
     val isEmpty: Boolean get() = items.isEmpty() && endReached
