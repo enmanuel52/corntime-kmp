@@ -2,6 +2,7 @@ package com.enmanuelbergling.corntime.navigation
 
 import androidx.navigation3.runtime.NavKey
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
@@ -13,6 +14,8 @@ import com.enmanuelbergling.corntime.feature.auth.presentation.navigation.LoginK
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MovieDetailsKey
 import com.enmanuelbergling.corntime.feature.movies.presentation.navigation.MoviesHomeKey
 import com.enmanuelbergling.corntime.feature.settings.presentation.navigation.SettingsKey
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.ListDetailsKey
+import com.enmanuelbergling.corntime.feature.watchlists.presentation.navigation.WatchlistKey
 import kotlin.test.Test
 
 class CornTimeAppStateTest {
@@ -104,13 +107,37 @@ class CornTimeAppStateTest {
     }
 
     @Test
-    fun givenLoggedOut_whenListingDrawerDestinations_thenLoginRequiredOnesAreHidden() {
-        // no destination requires login yet; this guards the rule for lists, added with that feature
+    fun givenLoggedOut_whenListingDrawerDestinations_thenListsIsHidden() {
         val loggedOut = state(isLoggedIn = false).drawerDestinations
-        val loggedIn = state(isLoggedIn = true).drawerDestinations
 
+        assertThat(loggedOut.contains(TopDestination.Lists)).isFalse()
         assertThat(loggedOut.none { it.loginRequired }).isTrue()
-        assertThat(loggedIn).isEqualTo(TopDestination.entries)
+    }
+
+    @Test
+    fun givenLoggedIn_whenListingDrawerDestinations_thenListsIsOffered() {
+        assertThat(state(isLoggedIn = true).drawerDestinations).isEqualTo(TopDestination.entries)
+    }
+
+    @Test
+    fun givenMovies_whenChoosingListsInTheDrawer_thenTheStackIsMoviesThenTheWatchlistWithoutTheDrawerGesture() {
+        val state = state(isLoggedIn = true)
+
+        state.navigateToDrawerDestination(TopDestination.Lists)
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey, WatchlistKey)
+        assertThat(state.mainDrawerEnabled).isFalse()
+    }
+
+    @Test
+    fun givenAShortcut_whenOpeningAList_thenTheStackIsMoviesThenThatListAndBackReturnsToMovies() {
+        val state = state(MoviesHomeKey, SettingsKey, LoginKey)
+
+        state.openList(listId = 4, listName = "Comedy")
+
+        assertThat(state.backStack).containsExactly(MoviesHomeKey, ListDetailsKey(4, "Comedy"))
+        state.back()
+        assertThat(state.currentKey).isEqualTo(MoviesHomeKey)
     }
 
     @Test

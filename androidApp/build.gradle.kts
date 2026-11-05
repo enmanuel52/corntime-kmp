@@ -19,6 +19,8 @@ dependencies {
     implementation(projects.core.designSystem)
     implementation(projects.feature.actor.presentation)
     implementation(projects.feature.auth.presentation)
+    implementation(projects.feature.favorites.presentation)
+    implementation(projects.feature.watchlists.presentation)
     implementation(projects.feature.settings.presentation)
     implementation(projects.feature.movies.presentation)
 
