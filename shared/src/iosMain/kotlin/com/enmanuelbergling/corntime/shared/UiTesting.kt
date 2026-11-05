@@ -3,11 +3,15 @@ package com.enmanuelbergling.corntime.shared
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.AuthPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.SettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.preferences.UserPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.preferences.OnboardingPreferenceDataSource
+import com.enmanuelbergling.corntime.core.domain.datasource.remote.AuthRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.MovieRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.TvRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.datasource.remote.UserRemoteDataSource
 import com.enmanuelbergling.corntime.core.domain.error.DataError
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthPreferenceDataSource
+import com.enmanuelbergling.corntime.core.testing.datasource.FakeAuthRemoteDataSource
+import com.enmanuelbergling.corntime.core.testing.datasource.FakeOnboardingPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeMovieRemoteDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeSettingsPreferenceDataSource
 import com.enmanuelbergling.corntime.core.testing.datasource.FakeTvRemoteDataSource
@@ -32,6 +36,8 @@ object UiTesting {
         fail(UserRemoteFunction.GetAccount, DataError.Network.Unauthorized)
     }
 
+    private val auth = FakeAuthRemoteDataSource()
+
     /** How many times [function] (a [MovieRemoteFunction] name, e.g. "GetUpcomingMovies") was requested. */
     fun movieCalls(function: String): Int = movies.callCount(MovieRemoteFunction.valueOf(function))
 
@@ -44,6 +50,9 @@ object UiTesting {
     private fun module(): Module = module {
         single<MovieRemoteDataSource> { movies }
         single<UserRemoteDataSource> { user }
+        single<AuthRemoteDataSource> { auth }
+        // UI tests start past the walkthrough
+        single<OnboardingPreferenceDataSource> { FakeOnboardingPreferenceDataSource(initiallyOnboarding = false) }
         single<TvRemoteDataSource> { FakeTvRemoteDataSource() }
         single<UserPreferenceDataSource> { FakeUserPreferenceDataSource() }
         single<AuthPreferenceDataSource> { FakeAuthPreferenceDataSource() }

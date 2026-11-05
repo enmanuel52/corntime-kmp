@@ -7,6 +7,8 @@ import com.enmanuelbergling.corntime.core.datastore.DataStorePathProvider
 import com.enmanuelbergling.corntime.core.datastore.secure.SecureStorage
 import com.enmanuelbergling.corntime.core.domain.model.MovieSection
 import com.enmanuelbergling.corntime.core.testing.util.MainDispatcherTest
+import com.enmanuelbergling.corntime.feature.auth.presentation.login.LoginViewModel
+import com.enmanuelbergling.corntime.feature.settings.presentation.SettingsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.details.MovieDetailsViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.home.MoviesViewModel
 import com.enmanuelbergling.corntime.feature.movies.presentation.search.MovieSearchViewModel
@@ -65,5 +67,15 @@ class KoinGraphTest : MainDispatcherTest() {
         MovieSection.entries.forEach { section ->
             assertThat(koin.get<MovieSectionViewModel> { parametersOf(section) }).isNotNull()
         }
+    }
+
+    @Test
+    fun givenAppGraph_whenResolvingAppLoginAndSettingsViewModels_thenAllDependenciesAreSatisfied() {
+        startWithTestInfrastructure()
+        val koin = KoinPlatform.getKoin()
+
+        assertThat(koin.get<AppViewModel>()).isNotNull()
+        assertThat(koin.get<LoginViewModel>()).isNotNull()
+        assertThat(koin.get<SettingsViewModel>()).isNotNull()
     }
 }

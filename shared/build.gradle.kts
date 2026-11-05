@@ -12,6 +12,9 @@ kotlin {
             // Everything SwiftUI touches must be exported from the umbrella framework.
             export(projects.core.domain)
             export(projects.core.presentation)
+            export(projects.feature.auth.domain)
+            export(projects.feature.auth.presentation)
+            export(projects.feature.settings.presentation)
             export(projects.feature.movies.domain)
             export(projects.feature.movies.presentation)
         }
@@ -21,11 +24,16 @@ kotlin {
         commonMain.dependencies {
             api(projects.core.domain)
             api(projects.core.presentation)
+            api(projects.feature.auth.domain)
+            api(projects.feature.auth.presentation)
+            api(projects.feature.settings.presentation)
             api(projects.feature.movies.domain)
             api(projects.feature.movies.presentation)
             implementation(projects.core.data)
             implementation(projects.core.datastore)
             implementation(libs.koin.core)
+            implementation(libs.koin.core.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel)
         }
         // Fakes for iOS UI-test launches only; Android never links them (and their JUnit) into the app.
         iosMain.dependencies {

@@ -3,9 +3,14 @@ package com.enmanuelbergling.corntime.shared
 import com.enmanuelbergling.corntime.core.data.di.CoreDataModule
 import com.enmanuelbergling.corntime.core.datastore.di.CoreDatastoreModule
 import com.enmanuelbergling.corntime.core.domain.di.CoreDomainModule
+import com.enmanuelbergling.corntime.feature.auth.domain.di.AuthDomainModule
+import com.enmanuelbergling.corntime.feature.auth.presentation.di.AuthPresentationModule
 import com.enmanuelbergling.corntime.feature.movies.domain.di.MoviesDomainModule
 import com.enmanuelbergling.corntime.feature.movies.presentation.di.MoviesPresentationModule
+import com.enmanuelbergling.corntime.feature.settings.presentation.di.SettingsPresentationModule
+import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.KoinApplication
+import org.koin.core.annotation.Module
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.plugin.module.dsl.startKoin
@@ -16,11 +21,20 @@ import org.koin.plugin.module.dsl.startKoin
         CoreDomainModule::class,
         CoreDataModule::class,
         CoreDatastoreModule::class,
+        AuthDomainModule::class,
+        AuthPresentationModule::class,
+        SettingsPresentationModule::class,
         MoviesDomainModule::class,
         MoviesPresentationModule::class,
+        SharedModule::class,
     ],
 )
 object CornTimeKoinApp
+
+/** App-wide bindings that live in this module, such as [AppViewModel]. */
+@Module
+@ComponentScan("com.enmanuelbergling.corntime.shared")
+class SharedModule
 
 /**
  * Single DI entry point for both apps. Android calls it from its Application class (providing the
