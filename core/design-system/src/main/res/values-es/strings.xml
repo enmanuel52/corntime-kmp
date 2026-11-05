@@ -26,6 +26,9 @@
     <string name="now_playing">En cartelera</string>
     <string name="popular">Popular</string>
     <string name="upcoming">Próximos</string>
+    <string name="on_the_air">En emisión</string>
+    <string name="airing_today">Se emite hoy</string>
+    <string name="favorites">Favoritos</string>
     <string name="more_icon">icono de más</string>
     <string name="clear_string_icon">icono de limpiar cadena</string>
     <string name="delete_icon">icono de eliminar</string>
@@ -48,7 +51,7 @@
     <string name="dark_theme_animation">animación del tema oscuro</string>
     <string name="nav_bar_icon">icono de la barra de navegación</string>
     <string name="home">Inicio</string>
-    <string name="tv_shows">TV Shows</string>
+    <string name="tv_shows">Series</string>
     <string name="movies">Películas</string>
     <string name="popularity">Popularidad</string>
     <string name="vote_average">Promedio de votos</string>
