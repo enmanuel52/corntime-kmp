@@ -160,7 +160,7 @@ private struct Information: View {
 
             HStack {
                 Text(genres + " - " + duration)
-                    .font(.default)
+                    .font(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .lineLimit(1)
 

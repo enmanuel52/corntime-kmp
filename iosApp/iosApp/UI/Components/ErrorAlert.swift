@@ -15,7 +15,7 @@ extension View {
                 set: { if !$0 { onDismiss() } }
             )
         ) {
-            Button("Accept", role: .close, action: onDismiss)
+            Button("Accept", role: .cancel, action: onDismiss)
             if let onRetry {
                 Button("Retry", action: onRetry)
             }
